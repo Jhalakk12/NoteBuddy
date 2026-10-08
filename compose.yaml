@@ -1,0 +1,192 @@
+name: notebuddy
+
+x-python-service: &python-service
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: notebuddy-python:latest
+  env_file:
+    - docker.env
+  restart: unless-stopped
+  networks:
+    - backend
+
+x-api-healthcheck: &api-healthcheck
+  interval: 10s
+  timeout: 5s
+  retries: 12
+  start_period: 20s
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    environment:
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_CONTEXT_LENGTH: "2048"
+      OLLAMA_KV_CACHE_TYPE: q8_0
+    expose:
+      - "11434"
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 20s
+
+  model-init:
+    image: ollama/ollama:latest
+    restart: "no"
+    env_file:
+      - docker.env
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - backend
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        for model in $$(printf '%s' "$${WEEK4_MODELS}" | tr ',' ' '); do
+          ollama show "$${model}" >/dev/null 2>&1 || ollama pull "$${model}" || exit 1
+        done
+        ollama show "$${EMBEDDING_MODEL}" >/dev/null 2>&1 || ollama pull "$${EMBEDDING_MODEL}"
+
+  chroma:
+    image: chromadb/chroma:1.5.9
+    restart: unless-stopped
+    expose:
+      - "8000"
+    ports:
+      - "${CHROMA_PORT:-8010}:8000"
+    volumes:
+      - chroma_data:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8000; printf \"GET /api/v2/heartbeat HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n\" >&3; read -t 3 status <&3; [[ \"$$status\" == *\"200 OK\"* ]]'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  data:
+    <<: *python-service
+    command: ["python", "-m", "uvicorn", "services.data.main:app", "--host", "0.0.0.0", "--port", "8003"]
+    expose:
+      - "8003"
+    ports:
+      - "${DATA_PORT:-8003}:8003"
+    volumes:
+      - ./data/documents:/app/data/documents
+      - ./:/workspace:ro
+    depends_on:
+      chroma:
+        condition: service_healthy
+      model-init:
+        condition: service_completed_successfully
+    healthcheck:
+      <<: *api-healthcheck
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8003/health"]
+
+  retrieval:
+    <<: *python-service
+    command: ["python", "-m", "uvicorn", "services.retrieval.main:app", "--host", "0.0.0.0", "--port", "8001"]
+    expose:
+      - "8001"
+    ports:
+      - "${RETRIEVAL_PORT:-8001}:8001"
+    depends_on:
+      chroma:
+        condition: service_healthy
+      model-init:
+        condition: service_completed_successfully
+    healthcheck:
+      <<: *api-healthcheck
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8001/health"]
+
+  llm:
+    <<: *python-service
+    command: ["python", "-m", "uvicorn", "services.llm.main:app", "--host", "0.0.0.0", "--port", "8002"]
+    expose:
+      - "8002"
+    ports:
+      - "${LLM_PORT:-8002}:8002"
+    depends_on:
+      model-init:
+        condition: service_completed_successfully
+    healthcheck:
+      <<: *api-healthcheck
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8002/health"]
+
+  application:
+    <<: *python-service
+    command: ["python", "-m", "uvicorn", "services.application.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      RETRIEVAL_SERVICE_URL: http://retrieval:8001
+      LLM_SERVICE_URL: http://llm:8002
+      DATA_SERVICE_URL: http://data:8003
+    expose:
+      - "8000"
+    ports:
+      - "${APPLICATION_PORT:-8000}:8000"
+    volumes:
+      - ./data/evaluations:/app/data/evaluations:ro
+    depends_on:
+      data:
+        condition: service_healthy
+      retrieval:
+        condition: service_healthy
+      llm:
+        condition: service_healthy
+    healthcheck:
+      <<: *api-healthcheck
+      test: ["CMD", "curl", "--fail", "--silent", "http://127.0.0.1:8000/health"]
+
+  website:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    image: notebuddy-website:latest
+    restart: unless-stopped
+    ports:
+      - "${NOTEBUDDY_PORT:-8080}:80"
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      application:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget --quiet --tries=1 --spider http://127.0.0.1/healthz &&
+          wget --quiet --tries=1 --spider http://127.0.0.1/ &&
+          wget --quiet --tries=1 --spider http://127.0.0.1/retrieval.html &&
+          wget --quiet --tries=1 --spider http://127.0.0.1/llm.html &&
+          wget --quiet --tries=1 --spider http://127.0.0.1/evaluation.html &&
+          wget --quiet --tries=1 --spider http://127.0.0.1/guardrails.html
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  chroma_data:
+  ollama_models:

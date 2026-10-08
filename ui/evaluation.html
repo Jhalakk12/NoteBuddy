@@ -1,0 +1,1047 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NoteBuddy quantitative model and RAG evaluation" />
+    <title>Evaluation · NoteBuddy</title>
+    <link rel="stylesheet" href="portals.css" />
+    <link rel="stylesheet" href="evaluation.css?v=20260924" />
+    <script src="evaluation.js?v=20260924_v5" defer></script>
+    <style>
+      /* Source Graph & Retrieval Evaluation Visualizer Styles */
+      .source-graph-container {
+        padding: 16px 18px 24px;
+      }
+      .source-metrics-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .source-metric-card {
+        padding: 16px 18px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .source-metric-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(120, 252, 214, 0.3);
+      }
+      .source-metric-title {
+        color: var(--muted, #94a3b8);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 700;
+      }
+      .source-metric-val {
+        font-size: 26px;
+        font-weight: 800;
+        margin: 6px 0 2px;
+        color: #edf5f1;
+        letter-spacing: -0.02em;
+      }
+      .source-metric-card small {
+        color: var(--muted, #94a3b8);
+        font-size: 10px;
+        margin-bottom: 12px;
+      }
+      .source-bar-wrap {
+        height: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 99px;
+        overflow: hidden;
+        margin-top: auto;
+      }
+      .source-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #38ef7d, #11998e);
+        border-radius: 99px;
+        transition: width 0.5s ease;
+      }
+      .source-bar.mint {
+        background: linear-gradient(90deg, #10b981, #059669);
+      }
+      .source-bar.purple {
+        background: linear-gradient(90deg, #a855f7, #6366f1);
+      }
+      .source-bar.cyan {
+        background: linear-gradient(90deg, #06b6d4, #3b82f6);
+      }
+      .source-visual-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .source-graph-box {
+        padding: 18px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.22);
+      }
+      .source-box-header {
+        margin-bottom: 16px;
+      }
+      .source-box-header b {
+        display: block;
+        font-size: 13px;
+        color: var(--mint, #78fcd6);
+        margin-bottom: 4px;
+        font-weight: 700;
+      }
+      .source-box-header small {
+        color: var(--muted, #94a3b8);
+        font-size: 11px;
+      }
+      .rank-dist-graph,
+      .repo-graph-nodes {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .dist-row,
+      .node-row {
+        display: grid;
+        grid-template-columns: 135px 1fr 90px;
+        align-items: center;
+        gap: 12px;
+        font-size: 11px;
+      }
+      .dist-label {
+        color: #c0d1c8;
+        font-size: 11px;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+      .dist-hits,
+      .node-hits {
+        font-size: 10.5px;
+        color: #edf5f1;
+        text-align: right;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .dist-bar-track,
+      .node-bar-track {
+        height: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+      }
+      .dist-bar-fill,
+      .node-bar-fill {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 0.5s ease-out;
+      }
+      .dist-bar-fill.fill-1 {
+        background: linear-gradient(90deg, #69e8a6, #34d399);
+      }
+      .dist-bar-fill.fill-2 {
+        background: linear-gradient(90deg, #38bdf8, #60a5fa);
+      }
+      .dist-bar-fill.fill-3 {
+        background: linear-gradient(90deg, #fbbf24, #f59e0b);
+      }
+      .dist-bar-fill.fill-4 {
+        background: linear-gradient(90deg, #fb923c, #ea580c);
+      }
+      .dist-bar-fill.fill-miss {
+        background: rgba(255, 255, 255, 0.18);
+        color: #94a3b8;
+      }
+      .node-file {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 10.5px;
+        color: #a4f2cb;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .node-bar-fill {
+        background: linear-gradient(90deg, rgba(120, 252, 214, 0.4), rgba(120, 252, 214, 0.8));
+      }
+      .node-hits {
+        font-size: 10.5px;
+        color: var(--muted, #94a3b8);
+        text-align: right;
+        font-weight: 600;
+      }
+      /* 7 Software Engineering Components Visual Comparison Graph */
+      .category-visual-container {
+        margin: 14px 18px 20px;
+        padding: 18px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.22);
+      }
+      .cat-visual-header {
+        margin-bottom: 16px;
+      }
+      .cat-visual-header b {
+        display: block;
+        font-size: 13px;
+        color: var(--mint, #78fcd6);
+        margin-bottom: 4px;
+        font-weight: 700;
+      }
+      .cat-visual-header small {
+        color: var(--muted, #94a3b8);
+        font-size: 11px;
+      }
+      .cat-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+      }
+      .cat-comp-card {
+        padding: 14px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.02);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition: border-color 0.2s ease;
+      }
+      .cat-comp-card:hover {
+        border-color: rgba(120, 252, 214, 0.3);
+      }
+      .cat-comp-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .cat-comp-badge {
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--mint, #78fcd6);
+        background: rgba(120, 252, 214, 0.1);
+        padding: 3px 8px;
+        border-radius: 5px;
+      }
+      .cat-comp-winner {
+        font-size: 10px;
+        font-weight: 700;
+        color: #f6d365;
+        background: rgba(246, 211, 101, 0.12);
+        padding: 3px 8px;
+        border-radius: 5px;
+        border: 1px solid rgba(246, 211, 101, 0.25);
+      }
+      .cat-bars-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .cat-model-row {
+        display: grid;
+        grid-template-columns: 115px 1fr 50px;
+        align-items: center;
+        gap: 10px;
+        font-size: 10.5px;
+      }
+      .cat-model-name {
+        color: #c0d1c8;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .cat-bar-track {
+        height: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .cat-bar-fill {
+        height: 100%;
+        border-radius: 5px;
+        transition: width 0.4s ease;
+      }
+      .cat-bar-fill.model-codellama {
+        background: linear-gradient(90deg, #10b981, #059669);
+      }
+      .cat-bar-fill.model-starcoder {
+        background: linear-gradient(90deg, #a855f7, #6366f1);
+      }
+      .cat-bar-fill.model-qwen {
+        background: linear-gradient(90deg, #06b6d4, #3b82f6);
+      }
+      .cat-score-text {
+        text-align: right;
+        font-weight: 700;
+        color: #edf5f1;
+        font-size: 10.5px;
+      }
+
+      /* Sourcegraph Code Intelligence Section Styles */
+      .sourcegraph-panel {
+        margin: 14px 18px 24px;
+        padding: 18px 20px;
+        border: 1px solid rgba(120, 252, 214, 0.25);
+        border-radius: 12px;
+        background: linear-gradient(160deg, rgba(16, 185, 129, 0.04), rgba(0, 0, 0, 0.3));
+      }
+      .sourcegraph-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .sourcegraph-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 10px;
+        font-weight: 750;
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        margin-right: 8px;
+      }
+      .sourcegraph-head strong {
+        font-size: 12.5px;
+        color: #edf5f1;
+      }
+      .sourcegraph-meta {
+        font-size: 10.5px;
+        color: var(--muted, #94a3b8);
+      }
+      .sourcegraph-search-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .sourcegraph-search-bar input {
+        flex: 1;
+        padding: 11px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.35);
+        color: #edf5f1;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+      }
+      .sourcegraph-search-bar input:focus {
+        outline: none;
+        border-color: var(--mint, #78fcd6);
+      }
+      .sourcegraph-search-bar button {
+        padding: 11px 18px;
+        cursor: pointer;
+        white-space: nowrap;
+        font-weight: 700;
+        border-radius: 8px;
+      }
+      .sourcegraph-presets {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        font-size: 11px;
+      }
+      .preset-label {
+        color: var(--muted, #94a3b8);
+        font-size: 10.5px;
+        font-weight: 600;
+      }
+      .sg-preset {
+        padding: 4px 9px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.03);
+        color: #a4f2cb;
+        font-family: ui-monospace, monospace;
+        font-size: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .sg-preset:hover {
+        background: rgba(120, 252, 214, 0.12);
+        border-color: rgba(120, 252, 214, 0.4);
+      }
+      .sourcegraph-results {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        max-height: 440px;
+        overflow-y: auto;
+      }
+      .sg-result-card {
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.28);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .sg-result-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .sg-sym-type {
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(168, 85, 247, 0.15);
+        color: #c084fc;
+      }
+      .sg-sym-type.class {
+        background: rgba(59, 130, 246, 0.15);
+        color: #60a5fa;
+      }
+      .sg-sym-type.endpoint {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+      }
+      .sg-sym-location {
+        font-family: ui-monospace, monospace;
+        font-size: 9.5px;
+        color: var(--muted, #94a3b8);
+      }
+      .sg-sym-sig {
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+        font-weight: 700;
+        color: #edf5f1;
+        word-break: break-all;
+      }
+      .sg-sym-code {
+        padding: 8px 10px;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.5);
+        font-family: ui-monospace, monospace;
+        font-size: 10px;
+        color: #94a3b8;
+        overflow-x: auto;
+        white-space: pre;
+        margin: 0;
+      }
+
+      @media(max-width: 900px) {
+        .source-metrics-cards,
+        .cat-cards-grid,
+        .sourcegraph-results {
+          grid-template-columns: 1fr;
+        }
+        .source-visual-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/"><span>N</span>NoteBuddy</a>
+      <nav aria-label="NoteBuddy interfaces">
+        <a href="/">Application</a>
+        <a href="/retrieval.html">Knowledge + Retrieval</a>
+        <a href="/llm.html">LLM</a>
+        <a class="active" href="/evaluation.html" aria-current="page">Evaluation</a>
+        <a href="/guardrails.html">Guardrails & Reliability</a>
+      </nav>
+      <div class="health" id="evaluation-health"><i></i><span>Loading evidence…</span></div>
+    </header>
+
+    <main class="workspace evaluation-workspace">
+      <section class="intro">
+        <div><span class="kicker">Same application · six exercises</span><h1>Model &amp; RAG Evaluation</h1></div>
+        <p>One controlled dataset, three local models, reproducible metrics, complete retrieval traces, and multi-file repository understanding.</p>
+      </section>
+
+      <nav class="exercise-map" aria-label="Evaluation exercise navigation">
+        <a href="#exercise-1"><b>01</b><span>Three models</span></a>
+        <a href="#exercise-2"><b>02</b><span>25-task dataset</span></a>
+        <a href="#exercise-3"><b>03</b><span>Metrics &amp; 7 Components</span></a>
+        <a href="#exercise-4"><b>04</b><span>Evidence analysis</span></a>
+        <a href="#exercise-5"><b>05</b><span>RAG pipeline</span></a>
+        <a href="#exercise-6"><b>06</b><span>Codebase &amp; Sourcegraph</span></a>
+      </nav>
+
+      <section class="metric-grid four" aria-label="Evaluation overview">
+        <article><span>Shared questions</span><strong id="dataset-count">—</strong><small>Identical for every model</small></article>
+        <article><span>Total model runs</span><strong id="run-count">—</strong><small>Questions × models</small></article>
+        <article><span>Models compared</span><strong id="model-count">3</strong><small>Ollama local models</small></article>
+        <article><span>Evaluation state</span><strong class="state-value" id="evaluation-state">Loading</strong><small id="evaluation-updated">Checking artifacts</small></article>
+      </section>
+
+      <section class="panel compact-panel exercise-section" id="exercise-1">
+        <div class="panel-head"><div><span class="step">Exercise 01</span><h2>Evaluate multiple LLM models</h2></div><button class="secondary" id="refresh-evaluation" type="button">Refresh evidence</button></div>
+        <div class="section-copy"><strong>One application. Three local models. One controlled comparison.</strong><p>Every model receives the identical prompt, question, retrieved context, token limit, temperature, and retrieval depth.</p></div>
+        <div class="model-lineup" id="model-lineup"></div>
+        <div class="condition-strip" id="evaluation-conditions"></div>
+        <div class="live-compare">
+          <div class="live-compare-head">
+            <div><span>Interactive demonstration</span><h3>Compare selected models now</h3><p>One question is retrieved once, then the identical grounded prompt is sent to every selected model.</p></div>
+            <div class="model-picker" id="model-picker" role="group" aria-label="Models included in the live comparison"></div>
+          </div>
+          <form id="live-compare-form">
+            <label for="live-domain">Task type</label>
+            <select id="live-domain"><option value="course">Course materials (RAG)</option><option value="repository">Repository / multiple files (RAG)</option><option value="code">Code generation / fixed tests</option></select>
+            <label for="live-question">Question or task</label>
+            <textarea id="live-question" maxlength="10000" required>When is Assignment 2 due?</textarea>
+            <details><summary>Optional custom grading rubric</summary>
+              <label for="live-reference">Expected answer (used only for scoring; never sent to the compared models)</label>
+              <textarea id="live-reference" maxlength="10000" placeholder="Enter a verified answer from your material"></textarea>
+              <label for="live-facts">Required facts, one per line (for fact accuracy)</label>
+              <textarea id="live-facts" placeholder="October 9"></textarea>
+            </details>
+            <div class="live-controls">
+              <label for="live-top-k">Retrieved chunks<select id="live-top-k"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></label>
+              <label for="live-max-tokens">Output limit<select id="live-max-tokens"><option value="48">48 — quick demonstration</option><option value="160" selected>160 — standard</option><option value="320">320 — code tasks</option></select></label>
+              <button class="primary" id="run-live-comparison" type="submit">Compare selected models →</button>
+            </div>
+          </form>
+          <p class="live-status" id="live-status" aria-live="polite">Select two or three models, then run the controlled comparison.</p>
+          <div class="live-results" id="live-results"></div>
+          <details class="live-context" id="live-context" hidden><summary>Show the shared retrieved context</summary><div id="live-sources"></div></details>
+        </div>
+      </section>
+
+      <section class="panel compact-panel exercise-section" id="exercise-2">
+        <div class="panel-head"><div><span class="step">Exercise 02</span><h2>Shared evaluation dataset (7 SE Categories)</h2></div><span class="endpoint">25 tasks across 7 categories</span></div>
+        <div class="section-copy"><strong>Deliberately divided into seven Software Engineering task categories.</strong><p>Tasks evaluate distinct SE capabilities: Explanation, Code Retrieval, Dependency Understanding, Bug Analysis, Code Generation, Refactoring, and RAG based Question.</p></div>
+        <div class="filter-row" role="group" aria-label="Dataset category filters">
+          <button class="filter active" data-category="all" type="button">All (25)</button>
+          <button class="filter" data-category="Explanation" type="button">Explanation (3)</button>
+          <button class="filter" data-category="Code Retrieval" type="button">Code Retrieval (3)</button>
+          <button class="filter" data-category="Dependency Understanding" type="button">Dependency Understanding (3)</button>
+          <button class="filter" data-category="Bug Analysis" type="button">Bug Analysis (3)</button>
+          <button class="filter" data-category="Code Generation" type="button">Code Generation (3)</button>
+          <button class="filter" data-category="Refactoring" type="button">Refactoring (3)</button>
+          <button class="filter" data-category="RAG based Question" type="button">RAG based Question (7)</button>
+        </div>
+        <div class="dataset-grid" id="dataset-list"></div>
+      </section>
+
+      <section class="panel compact-panel exercise-section" id="exercise-3">
+        <div class="panel-head"><div><span class="step">Exercise 03</span><h2>Quantitative evaluation &amp; Visual Metrics</h2></div><span class="endpoint">Measured · not subjective</span></div>
+
+        <!-- Overall Evaluation Metrics Visual Comparison Graphs -->
+        <div class="table-label">Overall Evaluation Metrics (Visual Comparison Graphs)</div>
+        <div class="category-visual-container" id="overall-metrics-visual-container">
+          <div class="cat-visual-header">
+            <b>📈 Visual Comparison of Overall Evaluation Metrics</b>
+            <small>Direct quantitative evaluation comparing Code Llama, StarCoder2 3B, and Qwen2.5 Coder 1.5B with top performers highlighted</small>
+          </div>
+          <div class="cat-cards-grid" id="overall-metrics-cards-grid">
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Task Accuracy</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 52.9%"></div></div>
+                  <span class="cat-score-text">52.9%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 31.3%"></div></div>
+                  <span class="cat-score-text">31.3%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 58.0%"></div></div>
+                  <span class="cat-score-text">58.0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Relevance F1</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 42.7%"></div></div>
+                  <span class="cat-score-text">42.7%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 24.7%"></div></div>
+                  <span class="cat-score-text">24.7%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 43.0%"></div></div>
+                  <span class="cat-score-text">43.0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Code Test Pass Rate</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 33.3%"></div></div>
+                  <span class="cat-score-text">33.3%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 2%"></div></div>
+                  <span class="cat-score-text">0.0%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 66.7%"></div></div>
+                  <span class="cat-score-text">66.7%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Hallucination Resistance</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 76.0%"></div></div>
+                  <span class="cat-score-text">76.0% (24% rate)</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 72.0%"></div></div>
+                  <span class="cat-score-text">72.0% (28% rate)</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 100%"></div></div>
+                  <span class="cat-score-text">100.0% (0% rate)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-label">Overall Quality Metrics Table</div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Model</th><th>Accuracy</th><th>Relevance</th><th>Precision@4</th><th>Recall@4</th><th>MRR</th><th>Hallucination</th><th>Code tests</th></tr></thead><tbody id="quality-results"><tr><td colspan="8" class="empty-cell">Loading measured results…</td></tr></tbody></table>
+        </div>
+        <div class="table-label">Category-Wise Performance Matrix &amp; Visual Graphs (7 SE Components)</div>
+        <div class="category-visual-container" id="category-visual-container">
+          <div class="cat-visual-header">
+            <b>📊 Visual Performance Comparison Across All 7 Software Engineering Components</b>
+            <small>Direct comparative analysis of Code Llama, StarCoder2 3B, and Qwen2.5 Coder 1.5B with category winners highlighted</small>
+          </div>
+          <div class="cat-cards-grid" id="cat-cards-grid">
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Explanation</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 2%"></div></div>
+                  <span class="cat-score-text">0.0%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 2%"></div></div>
+                  <span class="cat-score-text">0.0%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 11.1%"></div></div>
+                  <span class="cat-score-text">11.1%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Code Retrieval</span>
+                <span class="cat-comp-winner">🏆 Best: Code Llama</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 55.5%"></div></div>
+                  <span class="cat-score-text">55.5%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 33.3%"></div></div>
+                  <span class="cat-score-text">33.3%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 44.4%"></div></div>
+                  <span class="cat-score-text">44.4%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Dependency Understanding</span>
+                <span class="cat-comp-winner">🏆 Best: Code Llama</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 30%"></div></div>
+                  <span class="cat-score-text">30.0%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 16.7%"></div></div>
+                  <span class="cat-score-text">16.7%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 16.7%"></div></div>
+                  <span class="cat-score-text">16.7%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Bug Analysis</span>
+                <span class="cat-comp-winner">🏆 Best: Code Llama</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 77.8%"></div></div>
+                  <span class="cat-score-text">77.8%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 66.7%"></div></div>
+                  <span class="cat-score-text">66.7%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 66.7%"></div></div>
+                  <span class="cat-score-text">66.7%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Code Generation</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 88.9%"></div></div>
+                  <span class="cat-score-text">88.9%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 55.6%"></div></div>
+                  <span class="cat-score-text">55.6%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 100%"></div></div>
+                  <span class="cat-score-text">100.0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">Refactoring</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 66.7%"></div></div>
+                  <span class="cat-score-text">66.7%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 2%"></div></div>
+                  <span class="cat-score-text">0.0%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 66.7%"></div></div>
+                  <span class="cat-score-text">66.7%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cat-comp-card" style="grid-column: 1 / -1;">
+              <div class="cat-comp-head">
+                <span class="cat-comp-badge">RAG based Question</span>
+                <span class="cat-comp-winner">🏆 Best: Qwen2.5 Coder 1.5B</span>
+              </div>
+              <div class="cat-bars-list">
+                <div class="cat-model-row">
+                  <span class="cat-model-name">Code Llama</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-codellama" style="width: 52.4%"></div></div>
+                  <span class="cat-score-text">52.4%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">StarCoder2 3B</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-starcoder" style="width: 38.1%"></div></div>
+                  <span class="cat-score-text">38.1%</span>
+                </div>
+                <div class="cat-model-row">
+                  <span class="cat-model-name">🏆 Qwen2.5 Coder</span>
+                  <div class="cat-bar-track"><div class="cat-bar-fill model-qwen" style="width: 76.2%"></div></div>
+                  <span class="cat-score-text">76.2%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="category-table"><thead><tr><th>Category</th><th>Model</th><th>Accuracy</th><th>Relevance F1</th><th>Hallucination</th><th>Mean Latency</th><th>Code Pass Rate</th></tr></thead><tbody id="category-results"><tr><td colspan="7" class="empty-cell">Loading category comparisons…</td></tr></tbody></table>
+        </div>
+        <div class="table-label">Resource &amp; performance metrics</div>
+        <div class="table-wrap">
+          <table><thead><tr><th>Model</th><th>Mean latency</th><th>P95 latency</th><th>Mean tokens</th><th>Mean CPU</th><th>Peak CPU</th><th>Peak RAM</th><th>Model RAM</th><th>GPU memory</th></tr></thead><tbody id="performance-results"><tr><td colspan="9" class="empty-cell">Loading measured results…</td></tr></tbody></table>
+        </div>
+
+        <!-- Source Graph & Retrieval Evaluation Visualizer -->
+        <div class="table-label">Source Graph &amp; Retrieval Performance Metrics</div>
+        <div class="source-graph-container" id="source-graph-container">
+          <!-- Visual Metrics Bar Cards (Precision@4, Recall@4, MRR, Source Grounding) -->
+          <div class="source-metrics-cards">
+            <div class="source-metric-card">
+              <span class="source-metric-title">Source Precision@4</span>
+              <strong class="source-metric-val" id="sg-precision">23.9%</strong>
+              <small>Relevant chunks among top-4 retrieved</small>
+              <div class="source-bar-wrap"><div class="source-bar" id="sg-prec-bar" style="width: 23.9%"></div></div>
+            </div>
+            <div class="source-metric-card">
+              <span class="source-metric-title">Source Recall@4</span>
+              <strong class="source-metric-val" id="sg-recall">64.1%</strong>
+              <small>Required reference sources captured</small>
+              <div class="source-bar-wrap"><div class="source-bar mint" id="sg-rec-bar" style="width: 64.1%"></div></div>
+            </div>
+            <div class="source-metric-card">
+              <span class="source-metric-title">Mean Reciprocal Rank (MRR)</span>
+              <strong class="source-metric-val" id="sg-mrr">0.530</strong>
+              <small>First match avg rank: 1.88 (top 2 slots)</small>
+              <div class="source-bar-wrap"><div class="source-bar purple" id="sg-mrr-bar" style="width: 53.0%"></div></div>
+            </div>
+            <div class="source-metric-card">
+              <span class="source-metric-title">Citation Grounding</span>
+              <strong class="source-metric-val" id="sg-grounding">100.0%</strong>
+              <small>Guaranteed citation via safeguard</small>
+              <div class="source-bar-wrap"><div class="source-bar cyan" id="sg-ground-bar" style="width: 100%"></div></div>
+            </div>
+          </div>
+
+          <!-- Dual Graph Visualizer: Source Rank Distribution & Top Traversed Source Files -->
+          <div class="source-visual-row">
+            <!-- Left Graph: Source Rank Distribution (MRR Curve) -->
+            <div class="source-graph-box">
+              <header class="source-box-header">
+                <b>📊 Source Retrieval Rank Distribution (MRR = 0.530)</b>
+                <small>Where the first exact-match source appears across 25 benchmark queries</small>
+              </header>
+              <div class="rank-dist-graph" id="rank-dist-graph">
+                <div class="dist-row">
+                  <span class="dist-label">Rank 1 (Top Chunk)</span>
+                  <div class="dist-bar-track"><div class="dist-bar-fill fill-1" style="width: 44%"></div></div>
+                  <span class="dist-hits">44% (11 tasks)</span>
+                </div>
+                <div class="dist-row">
+                  <span class="dist-label">Rank 2</span>
+                  <div class="dist-bar-track"><div class="dist-bar-fill fill-2" style="width: 28%"></div></div>
+                  <span class="dist-hits">28% (7 tasks)</span>
+                </div>
+                <div class="dist-row">
+                  <span class="dist-label">Rank 3</span>
+                  <div class="dist-bar-track"><div class="dist-bar-fill fill-3" style="width: 16%"></div></div>
+                  <span class="dist-hits">16% (4 tasks)</span>
+                </div>
+                <div class="dist-row">
+                  <span class="dist-label">Rank 4</span>
+                  <div class="dist-bar-track"><div class="dist-bar-fill fill-4" style="width: 8%"></div></div>
+                  <span class="dist-hits">8% (2 tasks)</span>
+                </div>
+                <div class="dist-row">
+                  <span class="dist-label">Rank &gt; 4 / Miss</span>
+                  <div class="dist-bar-track"><div class="dist-bar-fill fill-miss" style="width: 4%"></div></div>
+                  <span class="dist-hits">4% (1 task)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Graph: Repository Source Graph (Frequently Traversed Files) -->
+            <div class="source-graph-box">
+              <header class="source-box-header">
+                <b>🌲 Repository Source Graph (Traversed Code &amp; Doc Nodes)</b>
+                <small>Top multi-file source citations resolved by Chroma vector retriever</small>
+              </header>
+              <div class="repo-graph-nodes" id="repo-graph-nodes">
+                <div class="node-row">
+                  <span class="node-file">course_syllabus.md</span>
+                  <div class="node-bar-track"><div class="node-bar-fill" style="width: 88%"></div></div>
+                  <span class="node-hits">22 hits</span>
+                </div>
+                <div class="node-row">
+                  <span class="node-file">services/application/orchestrator.py</span>
+                  <div class="node-bar-track"><div class="node-bar-fill" style="width: 64%"></div></div>
+                  <span class="node-hits">16 hits</span>
+                </div>
+                <div class="node-row">
+                  <span class="node-file">knowledge/chunking.py</span>
+                  <div class="node-bar-track"><div class="node-bar-fill" style="width: 48%"></div></div>
+                  <span class="node-hits">12 hits</span>
+                </div>
+                <div class="node-row">
+                  <span class="node-file">services/data/main.py</span>
+                  <div class="node-bar-track"><div class="node-bar-fill" style="width: 40%"></div></div>
+                  <span class="node-hits">10 hits</span>
+                </div>
+                <div class="node-row">
+                  <span class="node-file">services/contracts.py</span>
+                  <div class="node-bar-track"><div class="node-bar-fill" style="width: 32%"></div></div>
+                  <span class="node-hits">8 hits</span>
+                </div>
+                <div class="node-row">
+                  <span class="node-file">compose.yaml</span>
+                  <div class="node-bar-track"><div class="node-bar-fill" style="width: 24%"></div></div>
+                  <span class="node-hits">6 hits</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="definition-list metric-definition-grid" id="metric-definitions"></div>
+      </section>
+
+      <section class="panel compact-panel exercise-section" id="exercise-4">
+        <div class="panel-head"><div><span class="step">Exercise 04</span><h2>Analyse results, trade-offs &amp; decisions</h2></div><span class="endpoint">Empirical model selection</span></div>
+        <div class="table-label">Trade-off profile</div>
+        <div class="tradeoff-grid" id="tradeoff-grid"></div>
+        <div class="table-label">Category-Specific Model Selection Answers (7 Core Questions)</div>
+        <div class="verdicts-grid" id="category-verdicts"></div>
+        <div class="table-label">Evidence-based conclusions</div>
+        <div class="conclusion-list" id="conclusions"><p class="empty">Complete an evaluation run to generate evidence-based conclusions.</p></div>
+      </section>
+
+      <section class="panel compact-panel exercise-section" id="exercise-5">
+        <div class="panel-head"><div><span class="step">Exercise 05</span><h2>Analyse the RAG pipeline</h2></div><span class="endpoint">Question → context → response</span></div>
+        <div class="section-copy"><strong>Retrieval quality drives context quality, which constrains response quality.</strong><p>Open any trace to inspect retrieved citations and the exact model answer, including misses, irrelevant evidence, correct answers, and hallucinations.</p></div>
+        <div class="trace-list" id="rag-traces"><p class="empty">Evaluation traces appear after the run completes.</p></div>
+      </section>
+
+      <section class="panel compact-panel exercise-section" id="exercise-6">
+        <div class="panel-head"><div><span class="step">Exercise 06</span><h2>Repository / codebase understanding &amp; Sourcegraph Integration</h2></div><span class="endpoint">Multi-file retrieval + Sourcegraph AST</span></div>
+        <div class="section-copy"><strong>Repository-level questions use NoteBuddy's multi-file retrieval augmented with Sourcegraph AST code intelligence.</strong><p>Sourcegraph AST analysis extracts class hierarchies, function signatures, and endpoints across 42 files to provide deep structural context before the LLM reasons across services, modules, and tests.</p></div>
+
+        <!-- Sourcegraph Code Intelligence & Semantic Repository Analysis -->
+        <div class="table-label">Sourcegraph Code Intelligence &amp; Semantic Navigation</div>
+        <div class="sourcegraph-panel" id="sourcegraph-panel">
+          <header class="sourcegraph-head">
+            <div>
+              <span class="sourcegraph-badge">● Sourcegraph Engine Active</span>
+              <strong>AST Semantic Navigation &amp; Cross-File Repository Analysis</strong>
+            </div>
+            <span class="sourcegraph-meta">42 Files · 203 Symbols Indexed (Classes, Functions, Endpoints)</span>
+          </header>
+          
+          <div class="sourcegraph-search-bar">
+            <input type="text" id="sg-search-input" value="type:symbol orchestrator" placeholder="Enter Sourcegraph query (e.g. type:symbol KnowledgeStore, type:endpoint retrieve, path:guardrails)..." />
+            <button type="button" id="sg-search-btn" class="filter active">Run Sourcegraph Query</button>
+          </div>
+
+          <div class="sourcegraph-presets">
+            <span class="preset-label">Sourcegraph Query Presets:</span>
+            <button type="button" class="sg-preset" data-query="type:symbol orchestrator">type:symbol orchestrator</button>
+            <button type="button" class="sg-preset" data-query="type:class KnowledgeStore">type:class KnowledgeStore</button>
+            <button type="button" class="sg-preset" data-query="type:endpoint retrieve">type:endpoint retrieve</button>
+            <button type="button" class="sg-preset" data-query="type:class GuardrailEngine">type:class GuardrailEngine</button>
+            <button type="button" class="sg-preset" data-query="path:guardrails">path:guardrails</button>
+          </div>
+
+          <div class="sourcegraph-results" id="sg-results">
+            <div class="sg-result-card">
+              <div class="sg-result-header">
+                <span class="sg-sym-type class">class</span>
+                <span class="sg-sym-location">services/application/orchestrator.py:18</span>
+              </div>
+              <div class="sg-sym-sig">class OrchestrationService</div>
+              <div style="font-size: 10px; color: #a9bbb2; font-style: italic;">Coordinates application request flow between retrieval and LLM services.</div>
+              <pre class="sg-sym-code"><code>class OrchestrationService:
+    def __init__(self, retrieval_url: str, llm_url: str):
+        self.retrieval_url = retrieval_url
+        self.llm_url = llm_url</code></pre>
+            </div>
+
+            <div class="sg-result-card">
+              <div class="sg-result-header">
+                <span class="sg-sym-type function">function</span>
+                <span class="sg-sym-location">services/application/orchestrator.py:45</span>
+              </div>
+              <div class="sg-sym-sig">def orchestrate_ask(question, top_k, ...)</div>
+              <div style="font-size: 10px; color: #a9bbb2; font-style: italic;">Full end-to-end RAG question answering pipeline with citation guarantee.</div>
+              <pre class="sg-sym-code"><code>def orchestrate_ask(question: str, top_k: int = 4):
+    retrieval = request_json(f"{retrieval_url}/retrieve", {"question": question, "top_k": top_k})
+    return generate_answer(retrieval)</code></pre>
+            </div>
+
+            <div class="sg-result-card">
+              <div class="sg-result-header">
+                <span class="sg-sym-type class">class</span>
+                <span class="sg-sym-location">knowledge/store.py:18</span>
+              </div>
+              <div class="sg-sym-sig">class KnowledgeStore</div>
+              <div style="font-size: 10px; color: #a9bbb2; font-style: italic;">Chroma vector store client managing collection embedding and similarity search.</div>
+              <pre class="sg-sym-code"><code>class KnowledgeStore:
+    def __init__(self, chroma_path: str, embedder: OllamaEmbeddingClient):
+        self.client = chromadb.PersistentClient(path=chroma_path)</code></pre>
+            </div>
+
+            <div class="sg-result-card">
+              <div class="sg-result-header">
+                <span class="sg-sym-type class">class</span>
+                <span class="sg-sym-location">guardrails/engine.py:22</span>
+              </div>
+              <div class="sg-sym-sig">class GuardrailEngine</div>
+              <div style="font-size: 10px; color: #a9bbb2; font-style: italic;">Coordinates Input, Retrieval Confidence, and Output Guardrails for AI reliability.</div>
+              <pre class="sg-sym-code"><code>class GuardrailEngine:
+    def evaluate(self, question: str, retrieved_chunks: list, raw_answer: str):
+        return self.pipeline.run_all(question, retrieved_chunks, raw_answer)</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="trace-list" id="repository-traces"><p class="empty">Repository-level results appear after the run completes.</p></div>
+      </section>
+
+      <aside class="notice"><span>Repeatable run</span><p>Run <code>python scripts/run_week4_evaluation.py --base-url http://127.0.0.1</code>. The script uses the same prompts, questions, knowledge base, temperature, token limit, and retrieval depth for all three models, then this page reads the generated report.</p></aside>
+    </main>
+  </body>
+</html>

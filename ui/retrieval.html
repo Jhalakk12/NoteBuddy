@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NoteBuddy knowledge and retrieval workspace" />
+    <title>Knowledge + Retrieval · NoteBuddy</title>
+    <link rel="stylesheet" href="portals.css" />
+    <script src="portals.js" defer></script>
+  </head>
+  <body data-ui="retrieval">
+    <header class="topbar">
+      <a class="brand" href="/"><span>N</span>NoteBuddy</a>
+      <nav aria-label="Week 3 interfaces">
+        <a href="/">Application</a>
+        <a class="active" href="/retrieval.html" aria-current="page">Knowledge + Retrieval</a>
+        <a href="/llm.html">LLM</a>
+        <a href="/evaluation.html">Evaluation</a>
+        <a href="/guardrails.html">Guardrails & Reliability</a>
+      </nav>
+      <div class="health" id="service-health"><i></i><span>Checking Retrieval…</span></div>
+    </header>
+
+    <main class="workspace">
+      <section class="intro">
+        <div><span class="kicker">Week 3 · Interface 02</span><h1>Knowledge + Retrieval</h1></div>
+        <p>Manage course documents, rebuild embeddings, and inspect exactly which evidence Chroma retrieves before the LLM sees it.</p>
+      </section>
+
+      <section class="metric-grid" aria-label="Knowledge metrics">
+        <article><span>Documents</span><strong id="metric-documents">—</strong><small>PDF, Markdown, and text</small></article>
+        <article><span>Vector chunks</span><strong id="metric-chunks">—</strong><small>Stored in Chroma</small></article>
+        <article><span>Embedding model</span><strong class="model-name">nomic-embed-text</strong><small>Local through Ollama</small></article>
+      </section>
+
+      <div class="columns retrieval-columns">
+        <section class="panel">
+          <div class="panel-head"><div><span class="step">01</span><h2>Course documents</h2></div><button class="secondary" id="refresh-knowledge" type="button">Refresh</button></div>
+          <div class="document-list" id="document-list"><p class="empty">Loading documents…</p></div>
+          <div class="actions">
+            <label class="upload-control" for="knowledge-files">＋ Add documents</label>
+            <input id="knowledge-files" type="file" accept=".pdf,.txt,.md" multiple hidden />
+            <button class="primary" id="rebuild-index" type="button">Rebuild vector index</button>
+          </div>
+          <p class="feedback" id="knowledge-feedback" aria-live="polite"></p>
+        </section>
+
+        <section class="panel search-panel">
+          <div class="panel-head"><div><span class="step">02</span><h2>Similarity search</h2></div><span class="endpoint">POST /retrieve</span></div>
+          <form id="retrieval-form">
+            <label for="retrieval-question">Question to embed and search</label>
+            <textarea id="retrieval-question" maxlength="10000" required placeholder="What topics are covered in the course?"></textarea>
+            <div class="form-row">
+              <label>Results <select id="top-k"><option>2</option><option selected>4</option><option>6</option><option>8</option></select></label>
+              <button class="primary" type="submit">Search knowledge base →</button>
+            </div>
+          </form>
+          <div class="results" id="retrieval-results"><div class="empty-state"><span>⌕</span><strong>No search yet</strong><p>Submit a question to inspect ranked evidence and citation metadata.</p></div></div>
+        </section>
+      </div>
+
+      <section class="flow-strip" aria-label="Retrieval flow">
+        <span>Question</span><i>→</i><span>nomic-embed-text</span><i>→</i><span>Chroma similarity</span><i>→</i><span>Ranked evidence</span><i>→</i><span>Grounded prompt</span>
+      </section>
+    </main>
+  </body>
+</html>

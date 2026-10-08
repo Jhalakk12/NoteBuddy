@@ -1,0 +1,59 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "NoteBuddy: Complete local stack",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/run_notebuddy.py",
+      "preLaunchTask": "NoteBuddy: Setup local IDE",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": true
+    },
+    {
+      "name": "Application Service :8000",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["services.application.main:app", "--host", "127.0.0.1", "--port", "8000"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Retrieval Service :8001",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["services.retrieval.main:app", "--host", "127.0.0.1", "--port", "8001"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "LLM Service :8002",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["services.llm.main:app", "--host", "127.0.0.1", "--port", "8002"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Data Service :8003",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["services.data.main:app", "--host", "127.0.0.1", "--port", "8003"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Website + API proxy :8080",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/dev_server.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
+}

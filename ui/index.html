@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NoteBuddy course study assistant with grounded answers and verified citations." />
+    <title>Application · NoteBuddy</title>
+    <link rel="stylesheet" href="portals.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body data-ui="application">
+    <!-- Unified Top Navigation Bar -->
+    <header class="topbar">
+      <a class="brand" href="/"><span>N</span>NoteBuddy</a>
+      <nav aria-label="NoteBuddy interfaces">
+        <a class="active" href="/" aria-current="page">Application</a>
+        <a href="/retrieval.html">Knowledge + Retrieval</a>
+        <a href="/llm.html">LLM</a>
+        <a href="/evaluation.html">Evaluation</a>
+        <a href="/guardrails.html">Guardrails & Reliability</a>
+      </nav>
+
+      <div class="health ok" id="connection-state" title="Click to view microservices health" style="cursor: pointer;">
+        <i></i><b>Four services online</b>
+      </div>
+
+      <!-- Health Popover -->
+      <div class="system-popover" id="system-popover" hidden>
+        <div class="popover-heading">
+          <div>
+            <small>Live Services Status</small>
+            <strong>NoteBuddy Microservices</strong>
+          </div>
+          <button type="button" id="refresh-status" title="Refresh health">↻</button>
+        </div>
+        <div class="service-status-list" id="service-status-list"></div>
+      </div>
+    </header>
+
+    <!-- Unified Workspace Layout -->
+    <main class="workspace application-workspace" id="main-content">
+      <section class="intro">
+        <div>
+          <span class="kicker">Week 3 · Interface 01</span>
+          <h1>Course Study Assistant</h1>
+        </div>
+        <p>Ask questions across your syllabus, slides, and assignments with grounded answers, verified citations, and live model comparison.</p>
+      </section>
+
+      <!-- Metric Grid (Matches Retrieval and Evaluation) -->
+      <section class="metric-grid" aria-label="Study Assistant metrics">
+        <article>
+          <span>Active Course</span>
+          <strong class="model-name">CSE 4011</strong>
+          <small>Cloud Computing & LLM Systems</small>
+        </article>
+        <article>
+          <span>Indexed Knowledge</span>
+          <strong id="document-count">2 files</strong>
+          <small id="index-detail">106 Chroma vector chunks</small>
+        </article>
+        <article>
+          <span>Active Model</span>
+          <strong class="model-name">Code Llama</strong>
+          <small>Local Ollama · 0.0.0.0:11434</small>
+        </article>
+      </section>
+
+      <!-- Main Columns Grid -->
+      <div class="columns application-columns">
+        <!-- Left Column: Course Materials & Suggested Prompts -->
+        <div class="side-column">
+          <!-- Documents Panel -->
+          <section class="panel documents-panel">
+            <div class="panel-head">
+              <div>
+                <span class="step">01</span>
+                <h2>Course documents</h2>
+              </div>
+              <span class="endpoint">ChromaDB :8010</span>
+            </div>
+
+            <div class="document-list source-list" id="source-list">
+              <div class="knowledge-empty">
+                <p class="empty">Loading documents…</p>
+              </div>
+            </div>
+
+            <div class="actions">
+              <label class="upload-control" for="document-input">＋ Add documents</label>
+              <input id="document-input" type="file" accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown" multiple hidden />
+              <button class="primary" id="upload-button" type="button" style="display: none;">Upload</button>
+            </div>
+            <p class="feedback upload-status" id="upload-status" aria-live="polite"></p>
+
+            <div class="index-summary" id="index-card">
+              <span id="index-title" hidden>Knowledge ready</span>
+              <small id="mobile-index-status" hidden></small>
+              <button id="mobile-upload-button" hidden></button>
+              <span id="hero-system-status" hidden></span>
+            </div>
+          </section>
+
+          <!-- Suggested Prompts Panel -->
+          <section class="panel prompts-panel">
+            <div class="panel-head">
+              <div>
+                <span class="step">02</span>
+                <h2>Suggested questions</h2>
+              </div>
+              <small style="color: var(--mint); font-size: 10px; font-weight: 700;">1-Click Ask</small>
+            </div>
+
+            <div class="prompts-list">
+              <button class="prompt-chip" type="button" data-prompt="When is Assignment 2 due?">
+                <span>📅</span>
+                <div>
+                  <strong>When is Assignment 2 due?</strong>
+                  <small>Assessment deadline query</small>
+                </div>
+              </button>
+              <button class="prompt-chip" type="button" data-prompt="What topics are covered in the syllabus?">
+                <span>📖</span>
+                <div>
+                  <strong>What topics are in syllabus?</strong>
+                  <small>Curriculum & scope overview</small>
+                </div>
+              </button>
+              <button class="prompt-chip" type="button" data-prompt="What is the late submission penalty policy?">
+                <span>⚖️</span>
+                <div>
+                  <strong>Late submission penalty?</strong>
+                  <small>Grading policy check</small>
+                </div>
+              </button>
+              <button class="prompt-chip" type="button" data-prompt="Explain the RAG pipeline steps in NoteBuddy.">
+                <span>🔬</span>
+                <div>
+                  <strong>Explain RAG pipeline steps</strong>
+                  <small>Architecture explanation</small>
+                </div>
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Column: Grounded Conversation & Compare -->
+        <section class="panel chat-panel">
+          <div class="panel-head">
+            <div>
+              <span class="step">03</span>
+              <div style="display: flex; flex-direction: column;">
+                <span id="mode-overline" style="font-size: 9px; text-transform: uppercase; color: var(--mint); letter-spacing: 0.1em; font-weight: 700;">Grounded conversation</span>
+                <h2 id="mode-heading" style="margin: 0;">Ask your course</h2>
+              </div>
+            </div>
+
+            <div class="chat-actions">
+              <div class="mode-switch" role="group" aria-label="Answer mode">
+                <button class="active" type="button" data-mode="rag" title="Grounded answer backed by citations">Grounded</button>
+                <button type="button" data-mode="compare" title="Compare Base Model vs Grounded RAG">Compare</button>
+              </div>
+              <button class="secondary" id="clear-chat" type="button" title="Clear conversation" style="min-height: 32px; padding: 0 10px;">Clear</button>
+            </div>
+          </div>
+
+          <!-- Messages Area -->
+          <div class="messages-stream messages" id="messages" aria-live="polite">
+            <article class="message assistant-message">
+              <div class="avatar assistant-avatar">N</div>
+              <div class="message-content">
+                <span class="message-name">NoteBuddy Study Assistant</span>
+                <p>Welcome! Ask me any question about your course materials, syllabus, or assignments. Every grounded answer includes exact, verified citations.</p>
+              </div>
+            </article>
+          </div>
+
+          <!-- Quick Prompts Bar -->
+          <div class="chat-quick-bar">
+            <span>Quick:</span>
+            <button class="prompt-chip chip-mini" type="button" data-prompt="When is Assignment 2 due?">Assignment 2 due date</button>
+            <button class="prompt-chip chip-mini" type="button" data-prompt="What are the main topics in Week 4?">Week 4 topics</button>
+            <button class="prompt-chip chip-mini" type="button" data-prompt="What is the late submission penalty policy?">Late penalty</button>
+          </div>
+
+          <!-- Composer Form -->
+          <form class="chat-composer" id="question-form">
+            <label class="sr-only" for="question-input">Ask a course question</label>
+            <div class="composer-box">
+              <textarea
+                id="question-input"
+                rows="2"
+                maxlength="10000"
+                placeholder="Ask about a deadline, topic, lecture, or assessment…"
+                required
+              ></textarea>
+              <div class="composer-footer">
+                <span class="composer-mode-tag" id="composer-mode"><span>✦</span> RAG + citations</span>
+                <button class="primary send-btn" type="submit">
+                  <span>Ask course</span>
+                  <i>→</i>
+                </button>
+              </div>
+            </div>
+            <p class="demo-note" id="assistant-note" style="margin: 8px 0 0; color: var(--muted); font-size: 10px; text-align: center;">
+              Answers are generated strictly using the indexed course materials in ChromaDB.
+            </p>
+          </form>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

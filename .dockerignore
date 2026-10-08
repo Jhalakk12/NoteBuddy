@@ -1,0 +1,12 @@
+.git
+.gitignore
+.DS_Store
+.env
+.venv
+.pytest_cache
+__pycache__
+*.py[cod]
+*.log
+data/chroma
+data/demo-chroma
+evidence

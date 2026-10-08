@@ -1,0 +1,238 @@
+[
+  {
+    "id": "exp-01",
+    "category": "Explanation",
+    "domain": "repository",
+    "question": "Trace and explain what happens across files after a student submits a grounded question to POST /ask.",
+    "reference_answer": "services/application/main.py validates the request, orchestrator.py requests retrieval then generation through client.py, and the retrieval and LLM services call Chroma and Ollama.",
+    "required_keywords": ["services/application/main.py", "orchestrator.py", "client.py", "retrieval", "llm"],
+    "expected_sources": ["services/application/main.py", "services/application/orchestrator.py", "services/application/client.py"]
+  },
+  {
+    "id": "exp-02",
+    "category": "Explanation",
+    "domain": "course",
+    "question": "Explain the primary learning approach and progressive milestones used throughout the course.",
+    "reference_answer": "The course uses a Project-Based Learning (PjBL) approach with progressive development across milestones from API design to RAG deployment.",
+    "required_keywords": ["Project-Based Learning", "PjBL", "progressive"],
+    "expected_citations": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf, page/slide 2"],
+    "expected_sources": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf"]
+  },
+  {
+    "id": "exp-03",
+    "category": "Explanation",
+    "domain": "repository",
+    "question": "Explain how a browser request reaches private FastAPI services through the Docker network.",
+    "reference_answer": "compose.yaml publishes only Nginx; ui/nginx.conf maps same-origin prefixes to internal services over the backend network.",
+    "required_keywords": ["compose.yaml", "ui/nginx.conf", "Nginx", "backend"],
+    "expected_sources": ["compose.yaml", "ui/nginx.conf"]
+  },
+  {
+    "id": "ret-01",
+    "category": "Code Retrieval",
+    "domain": "repository",
+    "question": "Retrieve the files and classes responsible for document chunking and metadata preservation.",
+    "reference_answer": "knowledge/chunking.py defines chunk_units and Chunk dataclass preserving page, section, and citation metadata.",
+    "required_keywords": ["knowledge/chunking.py", "chunk_units", "Chunk"],
+    "expected_sources": ["knowledge/chunking.py", "knowledge/models.py"]
+  },
+  {
+    "id": "ret-02",
+    "category": "Code Retrieval",
+    "domain": "repository",
+    "question": "Locate the function ensuring citation safeguards and refusal checking in the application service.",
+    "reference_answer": "services/application/orchestrator.py defines _ensure_citation and _is_refusal to attach citations only to supported grounded answers.",
+    "required_keywords": ["services/application/orchestrator.py", "_ensure_citation", "_is_refusal"],
+    "expected_sources": ["services/application/orchestrator.py"]
+  },
+  {
+    "id": "ret-03",
+    "category": "Code Retrieval",
+    "domain": "repository",
+    "question": "Retrieve the service and method where Chroma vector store collections are initialized and queried.",
+    "reference_answer": "knowledge/store.py implements KnowledgeStore with query and upsert methods using Chroma PersistentClient.",
+    "required_keywords": ["knowledge/store.py", "KnowledgeStore", "query", "Chroma"],
+    "expected_sources": ["knowledge/store.py"]
+  },
+  {
+    "id": "dep-01",
+    "category": "Dependency Understanding",
+    "domain": "repository",
+    "question": "Which files and modules participate in document upload, parsing, chunking, embedding, and storage?",
+    "reference_answer": "The Application service forwards uploads to services/data/main.py, which uses knowledge/loaders.py, chunking.py, embeddings.py, ingest.py, and store.py.",
+    "required_keywords": ["services/data/main.py", "knowledge/loaders.py", "knowledge/chunking.py", "knowledge/embeddings.py", "knowledge/store.py"],
+    "expected_sources": ["services/data/main.py", "knowledge/ingest.py", "knowledge/loaders.py", "knowledge/chunking.py", "knowledge/store.py"]
+  },
+  {
+    "id": "dep-02",
+    "category": "Dependency Understanding",
+    "domain": "repository",
+    "question": "Which components and tests are directly impacted if GenerateResponse in services/contracts.py changes?",
+    "reference_answer": "GenerateResponse is declared in services/contracts.py and consumed by the LLM service, Application client/orchestrator, and tests/test_services.py.",
+    "required_keywords": ["services/contracts.py", "services/llm/main.py", "services/application/client.py", "tests/test_services.py"],
+    "expected_sources": ["services/contracts.py", "services/llm/main.py", "services/application/client.py", "tests/test_services.py"]
+  },
+  {
+    "id": "dep-03",
+    "category": "Dependency Understanding",
+    "domain": "repository",
+    "question": "Describe the runtime container dependencies between NoteBuddy services, ChromaDB, and Ollama in compose.yaml.",
+    "reference_answer": "Application depends on retrieval, llm, and data services; retrieval and data depend on chroma; llm depends on ollama; all communicate over the backend network.",
+    "required_keywords": ["compose.yaml", "retrieval", "llm", "data", "chroma", "ollama"],
+    "expected_sources": ["compose.yaml"]
+  },
+  {
+    "id": "bug-01",
+    "category": "Bug Analysis",
+    "domain": "repository",
+    "question": "Analyze why a RAG system hallucinates citations when queried with out-of-scope trivia and how to fix it.",
+    "reference_answer": "Chroma returns nearest neighbor vectors regardless of domain; ungrounded models leak parametric memory and safeguards falsely attach citations. Fix requires context support threshold checks and strict refusal markers.",
+    "required_keywords": ["nearest neighbor", "parametric memory", "context support", "refusal", "hallucination"],
+    "expected_sources": ["services/application/orchestrator.py", "knowledge/rag.py"]
+  },
+  {
+    "id": "bug-02",
+    "category": "Bug Analysis",
+    "domain": "repository",
+    "question": "Identify potential off-by-one errors or text loss when splitting documents with overlap in chunk_units.",
+    "reference_answer": "If step is calculated as max_characters - overlap_characters and step <= 0, infinite loops occur. Chunker must ensure step >= 1 and clamp bounds.",
+    "required_keywords": ["max_characters", "overlap_characters", "step", "chunk_units"],
+    "expected_sources": ["knowledge/chunking.py"]
+  },
+  {
+    "id": "bug-03",
+    "category": "Bug Analysis",
+    "domain": "repository",
+    "question": "Explain the bug that occurs if HTTP hop-by-hop headers like Transfer-Encoding are forwarded by dev_server.py.",
+    "reference_answer": "Forwarding hop-by-hop headers causes connection termination or chunked transfer mismatch errors in HTTP/1.1 proxies. They must be stripped via HOP_BY_HOP_HEADERS.",
+    "required_keywords": ["hop-by-hop", "transfer-encoding", "connection", "dev_server.py"],
+    "expected_sources": ["scripts/dev_server.py"]
+  },
+  {
+    "id": "code-01",
+    "category": "Code Generation",
+    "domain": "code",
+    "question": "Write only a Python function normalize_question(text) that trims leading/trailing whitespace and replaces every run of internal whitespace with one space.",
+    "reference_answer": "A valid Python normalize_question function using split and join.",
+    "required_keywords": ["def normalize_question"],
+    "expected_sources": [],
+    "code_test": "normalize_question"
+  },
+  {
+    "id": "code-02",
+    "category": "Code Generation",
+    "domain": "code",
+    "question": "Write only a Python function citation_label(source, page=None, section=None). Return 'source, page/slide N' when page is provided, otherwise 'source, section: S'.",
+    "reference_answer": "A valid Python citation_label function implementing the two citation formats.",
+    "required_keywords": ["def citation_label", "page/slide", "section:"],
+    "expected_sources": [],
+    "code_test": "citation_label"
+  },
+  {
+    "id": "code-03",
+    "category": "Code Generation",
+    "domain": "code",
+    "question": "Write only a Python function reciprocal_rank(ranked_sources, expected_source) returning 1/(one-based rank) of the first exact match, or 0.0 when absent.",
+    "reference_answer": "A valid Python reciprocal_rank function using the one-based index of the first exact match.",
+    "required_keywords": ["def reciprocal_rank"],
+    "expected_sources": [],
+    "code_test": "reciprocal_rank"
+  },
+  {
+    "id": "ref-01",
+    "category": "Refactoring",
+    "domain": "repository",
+    "question": "How should monolithic prompt string formatting in rag.py be refactored for maintainability and multi-model support?",
+    "reference_answer": "Extract prompt construction into isolated template builders with parameterizable system prompts, source blocks, and distinct formatters for code vs chat models.",
+    "required_keywords": ["prompt", "rag.py", "template", "maintainability"],
+    "expected_sources": ["knowledge/rag.py"]
+  },
+  {
+    "id": "ref-02",
+    "category": "Refactoring",
+    "domain": "repository",
+    "question": "How can synchronous file I/O in services/data/main.py be refactored to prevent blocking the async FastAPI event loop?",
+    "reference_answer": "Wrap blocking file read/write calls with anyio.to_thread.run_sync or use aiofiles to avoid blocking the Uvicorn worker thread.",
+    "required_keywords": ["async", "to_thread", "blocking", "services/data/main.py"],
+    "expected_sources": ["services/data/main.py"]
+  },
+  {
+    "id": "ref-03",
+    "category": "Refactoring",
+    "domain": "repository",
+    "question": "How can hardcoded service URLs and timeouts in ServiceClient be refactored to support twelve-factor cloud configuration?",
+    "reference_answer": "Use Pydantic BaseSettings with environment variable overrides and dependency injection rather than defaults in class constructors.",
+    "required_keywords": ["BaseSettings", "environment variable", "ServiceClient", "services/application/client.py"],
+    "expected_sources": ["services/application/client.py", "app/config.py"]
+  },
+  {
+    "id": "rag-01",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "What is the course code and full course name?",
+    "expected_citations": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf, page/slide 1"],
+    "reference_answer": "The course is CSE 4011, Intelligent Developer Tools and AI DevOps Workflows.",
+    "required_keywords": ["CSE 4011", "Intelligent Developer Tools", "AI DevOps Workflows"],
+    "expected_sources": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf"]
+  },
+  {
+    "id": "rag-02",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "How many credits and weekly contact hours does CSE 4011 have?",
+    "expected_citations": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf, page/slide 1"],
+    "reference_answer": "It has 3 credits, with 2 theory hours and 2 lab hours per week.",
+    "required_keywords": ["3", "2-hour Theory", "2 hours lab"],
+    "expected_sources": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf"]
+  },
+  {
+    "id": "rag-03",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "What are the start and end dates of the semester?",
+    "expected_citations": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf, page/slide 1"],
+    "reference_answer": "The semester runs from 27 July 2026 to 24 November 2026.",
+    "required_keywords": ["27 July 2026", "24 Nov 2026"],
+    "expected_sources": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf"]
+  },
+  {
+    "id": "rag-04",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "Who are the course faculty members?",
+    "expected_citations": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf, page/slide 1"],
+    "reference_answer": "The faculty members are Dr. Kiran Khatter and Mr. Naveen Singh.",
+    "required_keywords": ["Kiran Khatter", "Naveen Singh"],
+    "expected_sources": ["Intelligent Developer Tools and AI DevOps Workflows_Project Based.pdf"]
+  },
+  {
+    "id": "rag-05",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "When is Assignment 2 due and how must it be submitted?",
+    "expected_citations": ["example-syllabus.md, section: Assessment schedule"],
+    "reference_answer": "Assignment 2 is due at 5:00 PM on 15 October and must be submitted as a PDF through the course portal.",
+    "required_keywords": ["5:00 PM", "15 October", "PDF", "course portal"],
+    "expected_sources": ["example-syllabus.md"]
+  },
+  {
+    "id": "rag-06",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "What is the late-submission penalty?",
+    "expected_citations": ["example-syllabus.md, section: Late policy"],
+    "reference_answer": "Late work loses 5% of the available mark per calendar day unless an approved extension exists.",
+    "required_keywords": ["five percent", "calendar day", "approved extension"],
+    "expected_sources": ["example-syllabus.md"]
+  },
+  {
+    "id": "rag-07",
+    "category": "RAG based Question",
+    "domain": "course",
+    "question": "What food is served in the university cafeteria on Friday?",
+    "reference_answer": "The indexed course materials do not contain this information.",
+    "required_keywords": [],
+    "expected_sources": [],
+    "expect_refusal": true
+  }
+]

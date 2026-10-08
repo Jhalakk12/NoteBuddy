@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NoteBuddy raw LLM workspace" />
+    <title>LLM · NoteBuddy</title>
+    <link rel="stylesheet" href="portals.css" />
+    <script src="portals.js" defer></script>
+  </head>
+  <body data-ui="llm">
+    <header class="topbar">
+      <a class="brand" href="/"><span>N</span>NoteBuddy</a>
+      <nav aria-label="Week 3 interfaces">
+        <a href="/">Application</a>
+        <a href="/retrieval.html">Knowledge + Retrieval</a>
+        <a class="active" href="/llm.html" aria-current="page">LLM</a>
+        <a href="/evaluation.html">Evaluation</a>
+        <a href="/guardrails.html">Guardrails & Reliability</a>
+      </nav>
+      <div class="health" id="service-health"><i></i><span>Checking LLM…</span></div>
+    </header>
+
+    <main class="workspace">
+      <section class="intro">
+        <div><span class="kicker">Week 3 · Interface 03</span><h1>Raw LLM Workspace</h1></div>
+        <p>Send the same prompt to any of the three approved local models through the isolated LLM Service. This view intentionally adds no Chroma context, making the model boundary visible.</p>
+      </section>
+
+      <section class="model-banner">
+        <div class="model-glyph">✦</div>
+        <div class="model-choice"><label for="model-select">Active generation model</label><select id="model-select" aria-label="Generation model"><option>Loading models…</option></select><small id="model-availability">Ollama · private runtime</small></div>
+        <div class="runtime-detail"><span>Service boundary</span><strong>LLM API :8002</strong><small>Backend-only Docker network</small></div>
+      </section>
+
+      <div class="columns llm-columns">
+        <section class="panel prompt-panel">
+          <div class="panel-head"><div><span class="step">01</span><h2>Prompt</h2></div><span class="endpoint">POST /generate</span></div>
+          <form id="llm-form">
+            <label for="llm-prompt">Send an instruction without retrieved course context</label>
+            <textarea id="llm-prompt" maxlength="100000" required placeholder="Explain retrieval-augmented generation in three concise points."></textarea>
+            <div class="prompt-footer"><span><b>Raw mode</b> · same prompt, selected model, no retrieval</span><button class="primary" type="submit">Generate response →</button></div>
+          </form>
+        </section>
+
+        <section class="panel response-panel">
+          <div class="panel-head"><div><span class="step">02</span><h2>Model response</h2></div><button class="secondary" id="clear-output" type="button">Clear</button></div>
+          <div class="llm-output" id="llm-output"><div class="empty-state"><span>✦</span><strong>Ready for a prompt</strong><p>The response will appear here with the model name and request timing.</p></div></div>
+        </section>
+      </div>
+
+      <aside class="notice"><span>Why this UI exists</span><p>The Application UI adds retrieved evidence before generation. This raw LLM UI proves that the LLM Service is independent and demonstrates why a base model cannot reliably answer private course questions.</p></aside>
+    </main>
+  </body>
+</html>

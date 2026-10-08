@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="NoteBuddy — grounded answers from your course materials, with citations you can verify."
+    />
+    <title>NoteBuddy</title>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCA2NCA2NCc+PHJlY3Qgd2lkdGg9JzY0JyBoZWlnaHQ9JzY0JyByeD0nMTYnIGZpbGw9JyMxNTNkMzUnLz48dGV4dCB4PSczMicgeT0nNDMnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtc2l6ZT0nMzgnIGZvbnQtZmFtaWx5PSdBcmlhbCcgZmlsbD0nI2Q3ZmY3Mic+TjwvdGV4dD48L3N2Zz4=" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <main id="main-content">
+      <section class="hero shell" id="home">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glow" aria-hidden="true"></div>
+
+        <header class="site-header">
+          <a class="brand" href="#home" aria-label="NoteBuddy home">
+            <span class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img">
+                <path d="M4 5.5 12 2l8 3.5-8 3.6-8-3.6Z" />
+                <path d="M6.5 8.3v5.4c0 1.8 2.5 3.3 5.5 3.3s5.5-1.5 5.5-3.3V8.3" />
+                <path d="M20 6v7" />
+              </svg>
+            </span>
+            <span>NoteBuddy</span>
+          </a>
+
+          <nav class="desktop-nav" aria-label="Week 3 interfaces">
+            <a href="/" aria-current="page">Application</a>
+            <a href="/retrieval.html">Knowledge + Retrieval</a>
+            <a href="/llm.html">LLM</a>
+            <a href="/evaluation.html">Evaluation</a>
+            <a href="#architecture">Architecture</a>
+          </nav>
+
+          <a class="button button-light header-cta" href="#assistant">Ask a question</a>
+          <button class="menu-button" type="button" aria-label="Open navigation" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+        </header>
+
+        <nav class="mobile-nav" aria-label="Mobile navigation">
+          <a href="/">Application UI</a>
+          <a href="/retrieval.html">Knowledge + Retrieval UI</a>
+          <a href="/llm.html">LLM UI</a>
+          <a href="/evaluation.html">Evaluation</a>
+          <a href="#architecture">Architecture</a>
+          <a href="#assistant">Ask a question</a>
+        </nav>
+
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span></span> Private, grounded, traceable</div>
+          <h1>Find the answer.<br /><span>See the source.</span></h1>
+          <p>
+            Ask questions across your syllabus, lecture slides, assignment briefs, and past papers—and get a clear
+            answer backed by the exact page or section.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-light" href="#assistant">Try the assistant</a>
+            <a class="button button-ghost" href="#architecture">Explore how it works <span>→</span></a>
+          </div>
+        </div>
+
+        <div class="status-pill" id="hero-system-status" aria-label="System status">
+          <span class="status-dot"></span>
+          Checking NoteBuddy systems…
+        </div>
+      </section>
+
+      <section class="assistant-wrap shell reveal" id="assistant" aria-labelledby="assistant-heading">
+        <div class="assistant-frame">
+          <div class="app-topbar">
+            <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="app-title"><span class="mini-mark">N</span> NoteBuddy</div>
+            <button class="connection-state" id="connection-state" type="button" aria-expanded="false">
+              <span></span><b>Checking services…</b>
+            </button>
+          </div>
+
+          <div class="system-popover" id="system-popover" hidden>
+            <div class="popover-heading"><div><small>Live system status</small><strong>NoteBuddy services</strong></div><button type="button" id="refresh-status">↻</button></div>
+            <div class="service-status-list" id="service-status-list"></div>
+          </div>
+
+          <div class="assistant-app">
+            <aside class="source-sidebar">
+              <div class="knowledge-heading">
+                <div><p class="sidebar-label">Knowledge base</p><h2 id="assistant-heading">Your course</h2></div>
+                <span id="document-count">0 files</span>
+              </div>
+              <button class="upload-button" id="upload-button" type="button"><span>＋</span> Add course materials</button>
+              <input id="document-input" type="file" accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown" multiple hidden />
+              <p class="upload-status" id="upload-status" aria-live="polite"></p>
+              <div class="source-list" id="source-list">
+                <div class="knowledge-empty"><span>⇧</span><strong>No documents yet</strong><small>Upload PDF, TXT, or Markdown files</small></div>
+              </div>
+              <div class="index-card" id="index-card">
+                <span class="pulse-icon">✦</span>
+                <div><strong id="index-title">Knowledge base empty</strong><small id="index-detail">0 Chroma chunks</small></div>
+              </div>
+            </aside>
+
+            <div class="chat-panel">
+              <div class="chat-heading">
+                <div>
+                  <span class="overline" id="mode-overline">Grounded conversation</span>
+                  <h2 id="mode-heading">Ask your course</h2>
+                </div>
+                <div class="chat-actions">
+                  <div class="mode-switch" role="group" aria-label="Answer mode">
+                    <button class="active" type="button" data-mode="rag">Grounded</button>
+                    <button type="button" data-mode="compare">Compare</button>
+                  </div>
+                  <button class="icon-button" id="clear-chat" type="button" aria-label="Clear conversation">↻</button>
+                </div>
+              </div>
+
+              <div class="mobile-knowledge-bar">
+                <div><span class="status-dot"></span><b id="mobile-index-status">Checking knowledge base…</b></div>
+                <button type="button" id="mobile-upload-button">＋ Add files</button>
+              </div>
+
+              <div class="messages" id="messages" aria-live="polite">
+                <article class="message assistant-message">
+                  <div class="avatar assistant-avatar">N</div>
+                  <div class="message-content">
+                    <span class="message-name">NoteBuddy</span>
+                    <p>Welcome! Add your course materials, then ask me about deadlines, topics, assignments, or past papers. Every grounded answer will include its source.</p>
+                  </div>
+                </article>
+              </div>
+
+              <form class="composer" id="question-form">
+                <label class="sr-only" for="question-input">Ask a course question</label>
+                <textarea
+                  id="question-input"
+                  rows="1"
+                  maxlength="10000"
+                  placeholder="Ask about a deadline, topic, lecture, or assessment…"
+                  required
+                ></textarea>
+                <div class="composer-bottom">
+                  <div class="mode-label" id="composer-mode"><span>✦</span> RAG + citations</div>
+                  <button class="send-button" type="submit">
+                    <span>Ask course</span>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4 10 11-6-4 12-2-5-5-1Z" /></svg>
+                  </button>
+                </div>
+              </form>
+              <p class="demo-note" id="assistant-note">Answers use only the course materials currently indexed.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="material-strip shell reveal" aria-label="Supported course materials">
+        <p>One assistant across all your course materials</p>
+        <div class="material-grid">
+          <div><span>§</span> Syllabus</div>
+          <div><span>▤</span> Lecture slides</div>
+          <div><span>✓</span> Assignment briefs</div>
+          <div><span>⌁</span> Past papers</div>
+        </div>
+      </section>
+
+      <section class="section shell" id="features">
+        <div class="section-heading reveal">
+          <span class="kicker">Built for trustworthy study</span>
+          <h2>Answers that stay close<br />to your course.</h2>
+          <p>Less searching, less guessing, and a clear trail back to the material your instructor provided.</p>
+        </div>
+
+        <div class="bento-grid">
+          <article class="bento-card bento-wide reveal">
+            <div class="card-copy">
+              <h3>Grounded answers.</h3>
+              <p>Code Llama answers using only the course context retrieved for your question.</p>
+            </div>
+            <div class="grounding-visual">
+              <div class="query-node"><span>Q</span> What topics are in the midterm?</div>
+              <div class="connector-lines" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="context-row">
+                <div><span>S</span><small>Syllabus</small><strong>Week 1–5</strong></div>
+                <div><span>L</span><small>Lecture 4</small><strong>Embeddings</strong></div>
+                <div><span>E</span><small>Exam brief</small><strong>RAG concepts</strong></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="bento-card reveal">
+            <div class="card-copy">
+              <h3>Citations included.</h3>
+              <p>Every grounded response points to a filename and page, slide, or section.</p>
+            </div>
+            <div class="citation-visual">
+              <p>“The midterm covers Weeks 1–5.”</p>
+              <span><i>↗</i> Syllabus · Midterm coverage</span>
+              <span><i>12</i> Lecture 04 · Slide 12</span>
+            </div>
+          </article>
+
+          <article class="bento-card reveal">
+            <div class="card-copy">
+              <h3>Boundary-aware ingestion.</h3>
+              <p>PDF pages and document sections stay intact so citations remain meaningful.</p>
+            </div>
+            <div class="pages-visual">
+              <div class="page-card p1"><span>01</span><b>Overview</b><i></i><i></i><i></i></div>
+              <div class="page-card p2"><span>02</span><b>Embeddings</b><i></i><i></i><i></i></div>
+              <div class="page-card p3"><span>03</span><b>Retrieval</b><i></i><i></i><i></i></div>
+            </div>
+          </article>
+
+          <article class="bento-card reveal">
+            <div class="card-copy">
+              <h3>Private by design.</h3>
+              <p>Ollama, Code Llama, embeddings, and course content stay inside the private deployment.</p>
+            </div>
+            <div class="local-visual">
+              <div class="local-orbit"><span>⌂</span><i></i><i></i></div>
+              <div class="local-label"><strong>Private runtime</strong><small>Internal container network</small></div>
+            </div>
+          </article>
+
+          <article class="bento-card reveal">
+            <div class="card-copy">
+              <h3>See RAG make the difference.</h3>
+              <p>Compare the base model with the grounded path using the exact same question.</p>
+            </div>
+            <div class="compare-visual">
+              <div><small>Without RAG</small><p>“Due on &lt;date&gt;.”</p><span class="warning">No course context</span></div>
+              <div class="rag-side"><small>With RAG</small><p>“5 PM, 15 October.”</p><span class="success">Cited answer</span></div>
+            </div>
+          </article>
+
+          <article class="bento-card bento-wide reveal">
+            <div class="card-copy">
+              <h3>Services that work together.</h3>
+              <p>A clear API flow separates the student experience, retrieval, generation, and data ingestion.</p>
+            </div>
+            <div class="services-visual">
+              <div class="service-box active"><span>01</span><strong>Application</strong><small>Orchestrates</small></div>
+              <i>→</i>
+              <div class="service-box"><span>02</span><strong>Retrieval</strong><small>Finds context</small></div>
+              <i>→</i>
+              <div class="service-box"><span>03</span><strong>LLM</strong><small>Generates</small></div>
+              <i class="down-arrow">↙</i>
+              <div class="service-box"><span>04</span><strong>Data</strong><small>Ingests</small></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="architecture-section shell" id="architecture">
+        <div class="architecture-glow" aria-hidden="true"></div>
+        <div class="section-heading reveal">
+          <span class="kicker">Transparent by architecture</span>
+          <h2>From question to cited answer.</h2>
+          <p>Each step has one clear job, making the system easier to explain, test, and trust.</p>
+        </div>
+        <div class="pipeline reveal">
+          <article><span>01</span><div class="pipeline-icon">?</div><h3>Ask</h3><p>A student submits one course question.</p></article>
+          <div class="pipeline-arrow">→</div>
+          <article><span>02</span><div class="pipeline-icon">⌕</div><h3>Retrieve</h3><p>Chroma finds the closest course chunks.</p></article>
+          <div class="pipeline-arrow">→</div>
+          <article><span>03</span><div class="pipeline-icon">✦</div><h3>Generate</h3><p>Code Llama answers from supplied evidence.</p></article>
+          <div class="pipeline-arrow">→</div>
+          <article><span>04</span><div class="pipeline-icon">↗</div><h3>Verify</h3><p>The response links back to its source.</p></article>
+        </div>
+      </section>
+
+      <section class="journey-section shell" id="journey">
+        <div class="section-heading reveal">
+          <span class="kicker">One app, developed progressively</span>
+          <h2>Five exercises.<br />One complete system.</h2>
+          <p>Every stage extends the same NoteBuddy application, from a raw model call to containerized services.</p>
+        </div>
+        <div class="journey-grid">
+          <article class="journey-card complete reveal"><span>Exercise 01</span><b>✓</b><h3>Basic LLM app</h3><p>FastAPI sends a question to Code Llama through Ollama.</p><small>Complete</small></article>
+          <article class="journey-card complete reveal"><span>Exercise 02</span><b>✓</b><h3>Knowledge base</h3><p>Documents become cited chunks, embeddings, and Chroma vectors.</p><small>Complete</small></article>
+          <article class="journey-card complete reveal"><span>Exercise 03</span><b>✓</b><h3>Retrieval + RAG</h3><p>Questions retrieve context before generation and return sources.</p><small>Complete</small></article>
+          <article class="journey-card complete reveal"><span>Exercise 04</span><b>✓</b><h3>API services</h3><p>Application, Retrieval, LLM, and Data communicate over APIs.</p><small>Complete</small></article>
+          <article class="journey-card complete reveal"><span>Exercise 05</span><b>✓</b><h3>Docker deployment</h3><p>Compose packages, connects, checks, and persists the complete multi-service flow.</p><small>Complete</small></article>
+        </div>
+      </section>
+
+      <section class="statement shell reveal">
+        <div class="statement-mark">“</div>
+        <blockquote>
+          A useful study assistant should not ask students to trust a mysterious answer. It should show them exactly
+          where that answer came from.
+        </blockquote>
+        <div class="statement-byline"><span class="brand-mark small">N</span><div><strong>Design principle</strong><small>NoteBuddy</small></div></div>
+      </section>
+
+      <section class="faq-section shell" id="faq">
+        <div class="section-heading reveal">
+          <span class="kicker">Questions, answered</span>
+          <h2>Frequently asked questions.</h2>
+          <p>What the assistant does, where its knowledge comes from, and how answers stay traceable.</p>
+        </div>
+        <div class="faq-list reveal">
+          <article class="faq-item">
+            <button type="button" aria-expanded="false"><span>What is NoteBuddy?</span><i>+</i></button>
+            <div class="faq-answer"><p>It is a local RAG application that answers student questions using indexed course materials such as syllabi, lecture slides, assignment briefs, and past papers.</p></div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false"><span>How are answers kept grounded?</span><i>+</i></button>
+            <div class="faq-answer"><p>The question is embedded and matched against Chroma. Code Llama receives only the retrieved course chunks and is instructed not to invent facts outside that context.</p></div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false"><span>What does a citation contain?</span><i>+</i></button>
+            <div class="faq-answer"><p>Each stored chunk preserves its source filename, PDF page or slide number, document section, and chunk index. The final answer includes a readable citation label and a structured source record.</p></div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false"><span>Does the system send course data to a cloud model?</span><i>+</i></button>
+            <div class="faq-answer"><p>No. Ollama runs Code Llama and the embedding model inside the private deployment. Course files, vectors, prompts, and generated responses remain on the virtual machine.</p></div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false"><span>Which file types are supported?</span><i>+</i></button>
+            <div class="faq-answer"><p>The current ingestion pipeline supports PDF, plain-text, and Markdown documents. PDF pages and Markdown headings create safe citation boundaries.</p></div>
+          </article>
+          <article class="faq-item">
+            <button type="button" aria-expanded="false"><span>What happens when the material has no answer?</span><i>+</i></button>
+            <div class="faq-answer"><p>The assistant returns a clear no-context response instead of calling the LLM to guess. This behavior is enforced and covered by automated tests.</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="final-cta shell reveal">
+        <div class="cta-grid" aria-hidden="true"></div>
+        <div class="cta-glow" aria-hidden="true"></div>
+        <span class="kicker">Study with evidence</span>
+        <h2>Stop searching every file.<br />Start asking your course.</h2>
+        <p>Get a concise answer, then follow the citation whenever you need the full context.</p>
+        <a class="button button-light" href="#assistant">Ask your first question</a>
+      </section>
+    </main>
+
+    <footer class="footer shell">
+      <div class="footer-brand">
+        <a class="brand" href="#home"><span class="brand-mark small">N</span><span>NoteBuddy</span></a>
+        <p>Grounded answers. Traceable sources.</p>
+      </div>
+      <div class="footer-links">
+        <div><strong>Product</strong><a href="#features">Features</a><a href="#assistant">Ask course</a><a href="#architecture">Architecture</a></div>
+        <div><strong>Project</strong><a href="#journey">Build journey</a><a href="#architecture">System design</a><a href="#faq">FAQ</a></div>
+        <div><strong>Runtime</strong><span>FastAPI</span><span>Ollama</span><span>Chroma</span></div>
+      </div>
+      <div class="footer-bottom"><span>University LLM application project</span><span>Python · HTML · CSS · JavaScript</span></div>
+    </footer>
+  </body>
+</html>

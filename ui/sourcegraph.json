@@ -1,0 +1,2058 @@
+{
+  "status": "connected",
+  "engine": "Sourcegraph OSS / AST Code Intelligence",
+  "total_indexed_symbols": 205,
+  "total_indexed_files": 42,
+  "symbols": [
+    {
+      "name": "HealthResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 7,
+      "signature": "class HealthResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class HealthResponse(BaseModel):\n    service: str\n    status: str = \"ok\"\n    details: dict[str, str | int] = Field(default_factory=dict)\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=HealthResponse"
+    },
+    {
+      "name": "GenerateRequest",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 13,
+      "signature": "class GenerateRequest(BaseModel)",
+      "docstring": "",
+      "snippet": "class GenerateRequest(BaseModel):\n    prompt: str = Field(min_length=1, max_length=100_000)\n    model: str | None = Field(default=None, min_length=1, max_length=100)\n    max_tokens: int = Field(default=256, ge=16, le=1024)\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GenerateRequest"
+    },
+    {
+      "name": "GenerateResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 19,
+      "signature": "class GenerateResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class GenerateResponse(BaseModel):\n    answer: str\n    model: str\n    total_duration_ns: int | None = None\n    load_duration_ns: int | None = None\n    prompt_tokens: int | None = None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GenerateResponse"
+    },
+    {
+      "name": "ModelOption",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 31,
+      "signature": "class ModelOption(BaseModel)",
+      "docstring": "",
+      "snippet": "class ModelOption(BaseModel):\n    id: str\n    label: str\n    available: bool\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ModelOption"
+    },
+    {
+      "name": "ModelListResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 37,
+      "signature": "class ModelListResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class ModelListResponse(BaseModel):\n    default_model: str\n    models: list[ModelOption]\n\n\nclass RetrieveRequest(BaseModel):",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ModelListResponse"
+    },
+    {
+      "name": "RetrieveRequest",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 42,
+      "signature": "class RetrieveRequest(BaseModel)",
+      "docstring": "",
+      "snippet": "class RetrieveRequest(BaseModel):\n    question: str = Field(min_length=1, max_length=10_000)\n    top_k: int = Field(default=4, ge=1, le=20)\n\n\nclass SourceDto(BaseModel):",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RetrieveRequest"
+    },
+    {
+      "name": "SourceDto",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 47,
+      "signature": "class SourceDto(BaseModel)",
+      "docstring": "",
+      "snippet": "class SourceDto(BaseModel):\n    citation: str\n    source: str\n    page: int | None\n    section: str\n    excerpt: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=SourceDto"
+    },
+    {
+      "name": "EvaluationCompareRequest",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 56,
+      "signature": "class EvaluationCompareRequest(BaseModel)",
+      "docstring": "",
+      "snippet": "class EvaluationCompareRequest(BaseModel):\n    reference_answer: str = Field(default='', max_length=10000)\n    required_facts: list[str] = Field(default_factory=list, max_length=30)\n    domain: Literal['course', 'repository', 'code'] = 'course'\n    question: str = Field(min_length=1, max_length=10_000)\n    models: list[str] = Field(min_length=2, max_length=3)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=EvaluationCompareRequest"
+    },
+    {
+      "name": "EvaluationModelResult",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 66,
+      "signature": "class EvaluationModelResult(BaseModel)",
+      "docstring": "",
+      "snippet": "class EvaluationModelResult(BaseModel):\n    metrics: dict = Field(default_factory=dict)\n    model: str\n    answer: str\n    latency_seconds: float\n    prompt_tokens: int | None = None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=EvaluationModelResult"
+    },
+    {
+      "name": "EvaluationCompareResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 78,
+      "signature": "class EvaluationCompareResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class EvaluationCompareResponse(BaseModel):\n    question: str\n    sources: list[SourceDto]\n    results: list[EvaluationModelResult]\n    conditions: dict[str, str | int | float | bool]\n    orchestration: list[str]",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=EvaluationCompareResponse"
+    },
+    {
+      "name": "RetrieveResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 86,
+      "signature": "class RetrieveResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class RetrieveResponse(BaseModel):\n    question: str\n    grounded_prompt: str | None\n    sources: list[SourceDto]\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RetrieveResponse"
+    },
+    {
+      "name": "IngestRequest",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 92,
+      "signature": "class IngestRequest(BaseModel)",
+      "docstring": "",
+      "snippet": "class IngestRequest(BaseModel):\n    reset: bool = False\n\n\nclass IngestResponse(BaseModel):\n    documents: int",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=IngestRequest"
+    },
+    {
+      "name": "IngestResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 96,
+      "signature": "class IngestResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class IngestResponse(BaseModel):\n    documents: int\n    units: int\n    chunks: int\n    collection_total: int\n    embedding_model: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=IngestResponse"
+    },
+    {
+      "name": "RepositoryIngestResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 104,
+      "signature": "class RepositoryIngestResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class RepositoryIngestResponse(BaseModel):\n    files: int\n    chunks: int\n    collection_total: int\n    embedding_model: str\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RepositoryIngestResponse"
+    },
+    {
+      "name": "DocumentInfo",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 111,
+      "signature": "class DocumentInfo(BaseModel)",
+      "docstring": "",
+      "snippet": "class DocumentInfo(BaseModel):\n    name: str\n    extension: str\n    size_bytes: int\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=DocumentInfo"
+    },
+    {
+      "name": "KnowledgeStatus",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 117,
+      "signature": "class KnowledgeStatus(BaseModel)",
+      "docstring": "",
+      "snippet": "class KnowledgeStatus(BaseModel):\n    documents: list[DocumentInfo]\n    document_count: int\n    collection_total: int\n    supported_extensions: list[str]\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=KnowledgeStatus"
+    },
+    {
+      "name": "UploadResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 124,
+      "signature": "class UploadResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class UploadResponse(BaseModel):\n    uploaded: list[DocumentInfo]\n    rejected: list[str]\n\n\nclass DocumentDeleteResponse(BaseModel):",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=UploadResponse"
+    },
+    {
+      "name": "DocumentDeleteResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 129,
+      "signature": "class DocumentDeleteResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class DocumentDeleteResponse(BaseModel):\n    deleted: DocumentInfo\n    remaining_documents: int\n    collection_total: int\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=DocumentDeleteResponse"
+    },
+    {
+      "name": "ServiceStatus",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 135,
+      "signature": "class ServiceStatus(BaseModel)",
+      "docstring": "",
+      "snippet": "class ServiceStatus(BaseModel):\n    name: str\n    url: str\n    status: str\n    detail: str | None = None\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ServiceStatus"
+    },
+    {
+      "name": "SystemStatus",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 142,
+      "signature": "class SystemStatus(BaseModel)",
+      "docstring": "",
+      "snippet": "class SystemStatus(BaseModel):\n    overall: str\n    services: list[ServiceStatus]\n\n\nclass UserQuestion(BaseModel):",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=SystemStatus"
+    },
+    {
+      "name": "UserQuestion",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 147,
+      "signature": "class UserQuestion(BaseModel)",
+      "docstring": "",
+      "snippet": "class UserQuestion(BaseModel):\n    question: str = Field(min_length=1, max_length=10_000)\n\n\nclass OrchestratedAnswer(BaseModel):\n    answer: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=UserQuestion"
+    },
+    {
+      "name": "OrchestratedAnswer",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 151,
+      "signature": "class OrchestratedAnswer(BaseModel)",
+      "docstring": "",
+      "snippet": "class OrchestratedAnswer(BaseModel):\n    answer: str\n    sources: list[SourceDto]\n    model: str\n    orchestration: list[str]\n    exercise: int = 4",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OrchestratedAnswer"
+    },
+    {
+      "name": "RawAnswer",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 160,
+      "signature": "class RawAnswer(BaseModel)",
+      "docstring": "",
+      "snippet": "class RawAnswer(BaseModel):\n    answer: str\n    model: str\n\n\nclass ServiceComparison(BaseModel):",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RawAnswer"
+    },
+    {
+      "name": "ServiceComparison",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 165,
+      "signature": "class ServiceComparison(BaseModel)",
+      "docstring": "",
+      "snippet": "class ServiceComparison(BaseModel):\n    question: str\n    without_rag: RawAnswer\n    with_rag: OrchestratedAnswer\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ServiceComparison"
+    },
+    {
+      "name": "GuardrailCompareResult",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 171,
+      "signature": "class GuardrailCompareResult(BaseModel)",
+      "docstring": "",
+      "snippet": "class GuardrailCompareResult(BaseModel):\n    mode: str\n    answer: str\n    sources: list[SourceDto] = Field(default_factory=list)\n    guardrail_action: str\n    guardrail_reason: str | None = None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailCompareResult"
+    },
+    {
+      "name": "GuardrailCompareResponse",
+      "type": "class",
+      "file": "services/contracts.py",
+      "line": 184,
+      "signature": "class GuardrailCompareResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class GuardrailCompareResponse(BaseModel):\n    question: str\n    without_guardrail: GuardrailCompareResult\n    with_guardrail: GuardrailCompareResult\n    effectiveness_summary: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailCompareResponse"
+    },
+    {
+      "name": "DownstreamServiceError",
+      "type": "class",
+      "file": "services/application/client.py",
+      "line": 16,
+      "signature": "class DownstreamServiceError(RuntimeError)",
+      "docstring": "Raised when an orchestrated service call fails.",
+      "snippet": "class DownstreamServiceError(RuntimeError):\n    \"\"\"Raised when an orchestrated service call fails.\"\"\"\n\n\nclass ServiceClient:\n    def __init__(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=DownstreamServiceError"
+    },
+    {
+      "name": "ServiceClient",
+      "type": "class",
+      "file": "services/application/client.py",
+      "line": 20,
+      "signature": "class ServiceClient",
+      "docstring": "",
+      "snippet": "class ServiceClient:\n    def __init__(\n        self,\n        retrieval_url: str,\n        llm_url: str,\n        data_url: str,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ServiceClient"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 21,
+      "signature": "def __init__(self, retrieval_url, llm_url, data_url...)",
+      "docstring": "",
+      "snippet": "    def __init__(\n        self,\n        retrieval_url: str,\n        llm_url: str,\n        data_url: str,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "retrieve",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 33,
+      "signature": "def retrieve(self, question, top_k)",
+      "docstring": "",
+      "snippet": "    async def retrieve(self, question: str, top_k: int = 4) -> RetrieveResponse:\n        payload = await self._post(\n            f\"{self.retrieval_url}/retrieve\",\n            {\"question\": question, \"top_k\": top_k},\n        )",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=retrieve"
+    },
+    {
+      "name": "generate",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 40,
+      "signature": "def generate(self, prompt, model, max_tokens)",
+      "docstring": "",
+      "snippet": "    async def generate(\n        self,\n        prompt: str,\n        model: str | None = None,\n        max_tokens: int = 256,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=generate"
+    },
+    {
+      "name": "retrieve_repository",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 52,
+      "signature": "def retrieve_repository(self, question, top_k)",
+      "docstring": "",
+      "snippet": "    async def retrieve_repository(self, question: str, top_k: int = 4) -> RetrieveResponse:\n        payload = await self._post(f'{self.retrieval_url}/retrieve/repository', {'question': question, 'top_k': top_k})\n        return RetrieveResponse.model_validate(payload)\n\n    async def knowledge_status(self) -> KnowledgeStatus:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=retrieve_repository"
+    },
+    {
+      "name": "knowledge_status",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 56,
+      "signature": "def knowledge_status(self)",
+      "docstring": "",
+      "snippet": "    async def knowledge_status(self) -> KnowledgeStatus:\n        payload = await self._get(f\"{self.data_url}/documents\")\n        return KnowledgeStatus.model_validate(payload)\n\n    async def ingest(self, reset: bool = False) -> IngestResponse:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=knowledge_status"
+    },
+    {
+      "name": "ingest",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 60,
+      "signature": "def ingest(self, reset)",
+      "docstring": "",
+      "snippet": "    async def ingest(self, reset: bool = False) -> IngestResponse:\n        payload = await self._post(f\"{self.data_url}/ingest\", {\"reset\": reset})\n        return IngestResponse.model_validate(payload)\n\n    async def upload_documents(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ingest"
+    },
+    {
+      "name": "upload_documents",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 64,
+      "signature": "def upload_documents(self, files)",
+      "docstring": "",
+      "snippet": "    async def upload_documents(\n        self,\n        files: list[tuple[str, bytes, str]],\n    ) -> UploadResponse:\n        multipart = [",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=upload_documents"
+    },
+    {
+      "name": "delete_document",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 85,
+      "signature": "def delete_document(self, filename)",
+      "docstring": "",
+      "snippet": "    async def delete_document(self, filename: str) -> DocumentDeleteResponse:\n        from urllib.parse import quote\n\n        payload = await self._delete(f\"{self.data_url}/documents/{quote(filename, safe='')}\")\n        return DocumentDeleteResponse.model_validate(payload)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=delete_document"
+    },
+    {
+      "name": "service_status",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 91,
+      "signature": "def service_status(self, name, url)",
+      "docstring": "",
+      "snippet": "    async def service_status(self, name: str, url: str) -> ServiceStatus:\n        endpoint = f\"{url.rstrip('/')}/health\"\n        try:\n            payload = await self._get(endpoint)\n            detail_parts = [f\"{key}: {value}\" for key, value in payload.get(\"details\", {}).items()]",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=service_status"
+    },
+    {
+      "name": "_get",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 110,
+      "signature": "def _get(self, url)",
+      "docstring": "",
+      "snippet": "    async def _get(self, url: str) -> dict:\n        try:\n            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:\n                response = await client.get(url)\n                response.raise_for_status()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_get"
+    },
+    {
+      "name": "_post",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 119,
+      "signature": "def _post(self, url, json)",
+      "docstring": "",
+      "snippet": "    async def _post(self, url: str, json: dict) -> dict:\n        try:\n            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:\n                response = await client.post(url, json=json)\n                response.raise_for_status()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_post"
+    },
+    {
+      "name": "_delete",
+      "type": "function",
+      "file": "services/application/client.py",
+      "line": 128,
+      "signature": "def _delete(self, url)",
+      "docstring": "",
+      "snippet": "    async def _delete(self, url: str) -> dict:\n        try:\n            async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:\n                response = await client.delete(url)\n                response.raise_for_status()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_delete"
+    },
+    {
+      "name": "get_service_client",
+      "type": "function",
+      "file": "services/application/guardrails_api.py",
+      "line": 38,
+      "signature": "def get_service_client()",
+      "docstring": "",
+      "snippet": "def get_service_client() -> ServiceClient:\n    import os\n    return ServiceClient(\n        retrieval_url=os.getenv(\"RETRIEVAL_SERVICE_URL\", \"http://127.0.0.1:8001\"),\n        llm_url=os.getenv(\"LLM_SERVICE_URL\", \"http://127.0.0.1:8002\"),",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_service_client"
+    },
+    {
+      "name": "get_orchestrator",
+      "type": "function",
+      "file": "services/application/guardrails_api.py",
+      "line": 48,
+      "signature": "def get_orchestrator(client)",
+      "docstring": "",
+      "snippet": "def get_orchestrator(client: ServiceClient = Depends(get_service_client)) -> Orchestrator:\n    return Orchestrator(client, settings.retrieval_top_k)\n\n\n@router.get(\"/overview\")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_orchestrator"
+    },
+    {
+      "name": "guardrails_overview",
+      "type": "endpoint",
+      "file": "services/application/guardrails_api.py",
+      "line": 53,
+      "signature": "def guardrails_overview()",
+      "docstring": "Returns the operational status and catalog of configured guardrails.",
+      "snippet": "async def guardrails_overview() -> dict[str, Any]:\n    \"\"\"Returns the operational status and catalog of configured guardrails.\"\"\"\n    rules = [\n        {\n            \"id\": \"GR-01\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=guardrails_overview"
+    },
+    {
+      "name": "compare_guardrails",
+      "type": "endpoint",
+      "file": "services/application/guardrails_api.py",
+      "line": 132,
+      "signature": "def compare_guardrails(request, orchestrator)",
+      "docstring": "Demonstrates Without Guardrail (uncontrolled) vs With Guardrail (controlled).",
+      "snippet": "async def compare_guardrails(\n    request: UserQuestion,\n    orchestrator: Orchestrator = Depends(get_orchestrator),\n) -> GuardrailCompareResponse:\n    \"\"\"Demonstrates Without Guardrail (uncontrolled) vs With Guardrail (controlled).\"\"\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=compare_guardrails"
+    },
+    {
+      "name": "get_guardrails_report",
+      "type": "endpoint",
+      "file": "services/application/guardrails_api.py",
+      "line": 236,
+      "signature": "def get_guardrails_report()",
+      "docstring": "Returns the benchmark report for the 20-case AI Output Testing Suite.",
+      "snippet": "async def get_guardrails_report() -> dict[str, Any]:\n    \"\"\"Returns the benchmark report for the 20-case AI Output Testing Suite.\"\"\"\n    if REPORT_PATH.exists():\n        return json.loads(REPORT_PATH.read_text(encoding=\"utf-8\"))\n    from scripts.generate_guardrails_report import generate_benchmark_report",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_guardrails_report"
+    },
+    {
+      "name": "get_test_suite",
+      "type": "endpoint",
+      "file": "services/application/guardrails_api.py",
+      "line": 245,
+      "signature": "def get_test_suite()",
+      "docstring": "Returns the standardized test cases for AI Output Testing.",
+      "snippet": "async def get_test_suite() -> list[dict[str, Any]]:\n    \"\"\"Returns the standardized test cases for AI Output Testing.\"\"\"\n    return load_test_cases()\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_test_suite"
+    },
+    {
+      "name": "run_output_tests",
+      "type": "endpoint",
+      "file": "services/application/guardrails_api.py",
+      "line": 251,
+      "signature": "def run_output_tests(live, orchestrator)",
+      "docstring": "Executes or loads the AI Output Testing Suite systematically across all test cases.",
+      "snippet": "async def run_output_tests(\n    live: bool = False,\n    orchestrator: Orchestrator = Depends(get_orchestrator),\n) -> dict[str, Any]:\n    \"\"\"Executes or loads the AI Output Testing Suite systematically across all test cases.\"\"\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=run_output_tests"
+    },
+    {
+      "name": "get_service_client",
+      "type": "function",
+      "file": "services/application/main.py",
+      "line": 56,
+      "signature": "def get_service_client()",
+      "docstring": "",
+      "snippet": "def get_service_client() -> ServiceClient:\n    return ServiceClient(\n        retrieval_url=os.getenv(\"RETRIEVAL_SERVICE_URL\", \"http://127.0.0.1:8001\"),\n        llm_url=os.getenv(\"LLM_SERVICE_URL\", \"http://127.0.0.1:8002\"),\n        data_url=os.getenv(\"DATA_SERVICE_URL\", \"http://127.0.0.1:8003\"),",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_service_client"
+    },
+    {
+      "name": "get_orchestrator",
+      "type": "function",
+      "file": "services/application/main.py",
+      "line": 65,
+      "signature": "def get_orchestrator(client)",
+      "docstring": "",
+      "snippet": "def get_orchestrator(client: ServiceClient = Depends(get_service_client)) -> Orchestrator:\n    return Orchestrator(client, settings.retrieval_top_k)\n\n\n@app.post(\"/evaluation/compare-models\", response_model=EvaluationCompareResponse)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_orchestrator"
+    },
+    {
+      "name": "compare_evaluation_models",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 70,
+      "signature": "def compare_evaluation_models(request, client)",
+      "docstring": "Run one controlled, retrieval-grounded prompt through selected local models.",
+      "snippet": "async def compare_evaluation_models(\n    request: EvaluationCompareRequest,\n    client: ServiceClient = Depends(get_service_client),\n) -> EvaluationCompareResponse:\n    \"\"\"Run one controlled, retrieval-grounded prompt through selected local models.\"\"\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=compare_evaluation_models"
+    },
+    {
+      "name": "health",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 177,
+      "signature": "def health()",
+      "docstring": "",
+      "snippet": "async def health() -> HealthResponse:\n    return HealthResponse(service=\"application\")\n\n\n@app.get(\"/system/status\", response_model=SystemStatus)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=health"
+    },
+    {
+      "name": "system_status",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 182,
+      "signature": "def system_status(client)",
+      "docstring": "",
+      "snippet": "async def system_status(\n    client: ServiceClient = Depends(get_service_client),\n) -> SystemStatus:\n    checks = await asyncio.gather(\n        client.service_status(\"retrieval\", client.retrieval_url),",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=system_status"
+    },
+    {
+      "name": "knowledge_status",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 204,
+      "signature": "def knowledge_status(client)",
+      "docstring": "",
+      "snippet": "async def knowledge_status(\n    client: ServiceClient = Depends(get_service_client),\n) -> KnowledgeStatus:\n    try:\n        return await client.knowledge_status()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=knowledge_status"
+    },
+    {
+      "name": "upload_knowledge",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 217,
+      "signature": "def upload_knowledge(files, client)",
+      "docstring": "",
+      "snippet": "async def upload_knowledge(\n    files: list[UploadFile] = File(...),\n    client: ServiceClient = Depends(get_service_client),\n) -> UploadResponse:\n    forwarded = [",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=upload_knowledge"
+    },
+    {
+      "name": "delete_knowledge_document",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 239,
+      "signature": "def delete_knowledge_document(filename, client)",
+      "docstring": "",
+      "snippet": "async def delete_knowledge_document(\n    filename: str,\n    client: ServiceClient = Depends(get_service_client),\n) -> DocumentDeleteResponse:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=delete_knowledge_document"
+    },
+    {
+      "name": "ingest_knowledge",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 253,
+      "signature": "def ingest_knowledge(request, client)",
+      "docstring": "",
+      "snippet": "async def ingest_knowledge(\n    request: IngestRequest,\n    client: ServiceClient = Depends(get_service_client),\n) -> IngestResponse:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ingest_knowledge"
+    },
+    {
+      "name": "ask",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 267,
+      "signature": "def ask(request, orchestrator, guardrails)",
+      "docstring": "",
+      "snippet": "async def ask(\n    request: UserQuestion,\n    orchestrator: Orchestrator = Depends(get_orchestrator),\n    guardrails: bool = True,\n) -> OrchestratedAnswer:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ask"
+    },
+    {
+      "name": "compare",
+      "type": "endpoint",
+      "file": "services/application/main.py",
+      "line": 282,
+      "signature": "def compare(request, orchestrator)",
+      "docstring": "",
+      "snippet": "async def compare(\n    request: UserQuestion,\n    orchestrator: Orchestrator = Depends(get_orchestrator),\n) -> ServiceComparison:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=compare"
+    },
+    {
+      "name": "_is_grounded_in_context",
+      "type": "function",
+      "file": "services/application/orchestrator.py",
+      "line": 18,
+      "signature": "def _is_grounded_in_context(answer, context, threshold)",
+      "docstring": "",
+      "snippet": "def _is_grounded_in_context(answer: str, context: str, threshold: float = 0.20) -> bool:\n    tokens = set(TOKEN_RE.findall(answer.casefold())) - STOP_WORDS\n    if not tokens:\n        return True\n    supported = set(TOKEN_RE.findall(context.casefold())) - STOP_WORDS",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_is_grounded_in_context"
+    },
+    {
+      "name": "Orchestrator",
+      "type": "class",
+      "file": "services/application/orchestrator.py",
+      "line": 30,
+      "signature": "class Orchestrator",
+      "docstring": "",
+      "snippet": "class Orchestrator:\n    def __init__(self, client: ServiceClient, top_k: int = 4) -> None:\n        self.client = client\n        self.top_k = top_k\n\n    async def raw_answer(self, question: str) -> RawAnswer:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=Orchestrator"
+    },
+    {
+      "name": "_is_refusal",
+      "type": "function",
+      "file": "services/application/orchestrator.py",
+      "line": 126,
+      "signature": "def _is_refusal(answer)",
+      "docstring": "",
+      "snippet": "def _is_refusal(answer: str) -> bool:\n    lowered = answer.lower()\n    return (\n        NO_CONTEXT_ANSWER.lower() in lowered\n        or \"couldn't find relevant information\" in lowered",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_is_refusal"
+    },
+    {
+      "name": "_ensure_citation",
+      "type": "function",
+      "file": "services/application/orchestrator.py",
+      "line": 141,
+      "signature": "def _ensure_citation(answer, primary_citation)",
+      "docstring": "",
+      "snippet": "def _ensure_citation(answer: str, primary_citation: str) -> str:\n    if _is_refusal(answer):\n        return answer\n    if f\"[{primary_citation}]\" in answer:\n        return answer",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_ensure_citation"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "services/application/orchestrator.py",
+      "line": 31,
+      "signature": "def __init__(self, client, top_k)",
+      "docstring": "",
+      "snippet": "    def __init__(self, client: ServiceClient, top_k: int = 4) -> None:\n        self.client = client\n        self.top_k = top_k\n\n    async def raw_answer(self, question: str) -> RawAnswer:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "raw_answer",
+      "type": "function",
+      "file": "services/application/orchestrator.py",
+      "line": 35,
+      "signature": "def raw_answer(self, question)",
+      "docstring": "",
+      "snippet": "    async def raw_answer(self, question: str) -> RawAnswer:\n        generated = await self.client.generate(question)\n        return RawAnswer(answer=generated.answer, model=generated.model)\n\n    async def grounded_answer(self, question: str, with_guardrails: bool = True) -> OrchestratedAnswer:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=raw_answer"
+    },
+    {
+      "name": "grounded_answer",
+      "type": "function",
+      "file": "services/application/orchestrator.py",
+      "line": 39,
+      "signature": "def grounded_answer(self, question, with_guardrails)",
+      "docstring": "",
+      "snippet": "    async def grounded_answer(self, question: str, with_guardrails: bool = True) -> OrchestratedAnswer:\n        steps = [\"application\"]\n\n        # Stage 1: Input Guardrails\n        if with_guardrails:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=grounded_answer"
+    },
+    {
+      "name": "get_document_path",
+      "type": "function",
+      "file": "services/data/main.py",
+      "line": 30,
+      "signature": "def get_document_path()",
+      "docstring": "",
+      "snippet": "def get_document_path() -> Path:\n    return Path(os.getenv(\"DOCUMENT_PATH\", \"data/documents\"))\n\n\ndef get_store() -> KnowledgeStore:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_document_path"
+    },
+    {
+      "name": "get_store",
+      "type": "function",
+      "file": "services/data/main.py",
+      "line": 34,
+      "signature": "def get_store()",
+      "docstring": "",
+      "snippet": "def get_store() -> KnowledgeStore:\n    embedder = OllamaEmbeddingClient(\n        settings.ollama_base_url,\n        settings.embedding_model,\n        settings.ollama_timeout_seconds,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_store"
+    },
+    {
+      "name": "get_repository_path",
+      "type": "function",
+      "file": "services/data/main.py",
+      "line": 43,
+      "signature": "def get_repository_path()",
+      "docstring": "",
+      "snippet": "def get_repository_path() -> Path:\n    return Path(os.getenv(\"REPOSITORY_PATH\", Path(__file__).resolve().parents[2]))\n\n\ndef get_repository_store() -> KnowledgeStore:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_repository_path"
+    },
+    {
+      "name": "get_repository_store",
+      "type": "function",
+      "file": "services/data/main.py",
+      "line": 47,
+      "signature": "def get_repository_store()",
+      "docstring": "",
+      "snippet": "def get_repository_store() -> KnowledgeStore:\n    embedder = OllamaEmbeddingClient(\n        settings.ollama_base_url,\n        settings.embedding_model,\n        settings.ollama_timeout_seconds,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_repository_store"
+    },
+    {
+      "name": "health",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 61,
+      "signature": "def health(store, document_path)",
+      "docstring": "",
+      "snippet": "def health(\n    store: KnowledgeStore = Depends(get_store),\n    document_path: Path = Depends(get_document_path),\n) -> HealthResponse:\n    document_path.mkdir(parents=True, exist_ok=True)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=health"
+    },
+    {
+      "name": "documents",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 76,
+      "signature": "def documents(store, document_path)",
+      "docstring": "",
+      "snippet": "def documents(\n    store: KnowledgeStore = Depends(get_store),\n    document_path: Path = Depends(get_document_path),\n) -> KnowledgeStatus:\n    document_path.mkdir(parents=True, exist_ok=True)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=documents"
+    },
+    {
+      "name": "upload_documents",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 91,
+      "signature": "def upload_documents(files, document_path)",
+      "docstring": "",
+      "snippet": "async def upload_documents(\n    files: list[UploadFile] = File(...),\n    document_path: Path = Depends(get_document_path),\n) -> UploadResponse:\n    document_path.mkdir(parents=True, exist_ok=True)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=upload_documents"
+    },
+    {
+      "name": "delete_document",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 116,
+      "signature": "def delete_document(filename, store, document_path)",
+      "docstring": "Remove a document's vectors and file without rebuilding unrelated sources.",
+      "snippet": "def delete_document(\n    filename: str,\n    store: KnowledgeStore = Depends(get_store),\n    document_path: Path = Depends(get_document_path),\n) -> DocumentDeleteResponse:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=delete_document"
+    },
+    {
+      "name": "ingest",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 148,
+      "signature": "def ingest(request, store, document_path)",
+      "docstring": "",
+      "snippet": "def ingest(\n    request: IngestRequest,\n    store: KnowledgeStore = Depends(get_store),\n    document_path: Path = Depends(get_document_path),\n) -> IngestResponse:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ingest"
+    },
+    {
+      "name": "repository_status",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 172,
+      "signature": "def repository_status(store, repository_path)",
+      "docstring": "",
+      "snippet": "def repository_status(\n    store: KnowledgeStore = Depends(get_repository_store),\n    repository_path: Path = Depends(get_repository_path),\n) -> RepositoryIngestResponse:\n    return RepositoryIngestResponse(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=repository_status"
+    },
+    {
+      "name": "repository_ingest",
+      "type": "endpoint",
+      "file": "services/data/main.py",
+      "line": 185,
+      "signature": "def repository_ingest(request, store, repository_path)",
+      "docstring": "",
+      "snippet": "def repository_ingest(\n    request: IngestRequest,\n    store: KnowledgeStore = Depends(get_repository_store),\n    repository_path: Path = Depends(get_repository_path),\n) -> RepositoryIngestResponse:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=repository_ingest"
+    },
+    {
+      "name": "_document_info",
+      "type": "function",
+      "file": "services/data/main.py",
+      "line": 199,
+      "signature": "def _document_info(path, root)",
+      "docstring": "",
+      "snippet": "def _document_info(path: Path, root: Path) -> DocumentInfo:\n    return DocumentInfo(\n        name=path.relative_to(root).as_posix(),\n        extension=path.suffix.lower(),\n        size_bytes=path.stat().st_size,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_document_info"
+    },
+    {
+      "name": "get_llm",
+      "type": "function",
+      "file": "services/llm/main.py",
+      "line": 26,
+      "signature": "def get_llm()",
+      "docstring": "",
+      "snippet": "def get_llm() -> OllamaClient:\n    return OllamaClient(\n        settings.ollama_base_url,\n        settings.ollama_model,\n        settings.ollama_timeout_seconds,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_llm"
+    },
+    {
+      "name": "health",
+      "type": "endpoint",
+      "file": "services/llm/main.py",
+      "line": 35,
+      "signature": "def health()",
+      "docstring": "",
+      "snippet": "async def health() -> HealthResponse:\n    try:\n        async with httpx.AsyncClient(timeout=5) as client:\n            response = await client.get(f\"{settings.ollama_base_url}/api/version\")\n            response.raise_for_status()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=health"
+    },
+    {
+      "name": "models",
+      "type": "endpoint",
+      "file": "services/llm/main.py",
+      "line": 53,
+      "signature": "def models()",
+      "docstring": "",
+      "snippet": "async def models() -> ModelListResponse:\n    approved = list(dict.fromkeys((settings.ollama_model, *settings.week4_models)))\n    try:\n        async with httpx.AsyncClient(timeout=10) as client:\n            response = await client.get(f\"{settings.ollama_base_url}/api/tags\")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=models"
+    },
+    {
+      "name": "generate",
+      "type": "endpoint",
+      "file": "services/llm/main.py",
+      "line": 82,
+      "signature": "def generate(request, llm)",
+      "docstring": "",
+      "snippet": "async def generate(\n    request: GenerateRequest,\n    llm: OllamaClient = Depends(get_llm),\n) -> GenerateResponse:\n    selected_model = request.model or settings.ollama_model",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=generate"
+    },
+    {
+      "name": "get_store",
+      "type": "function",
+      "file": "services/retrieval/main.py",
+      "line": 20,
+      "signature": "def get_store()",
+      "docstring": "",
+      "snippet": "def get_store() -> KnowledgeStore:\n    embedder = OllamaEmbeddingClient(\n        settings.ollama_base_url,\n        settings.embedding_model,\n        settings.ollama_timeout_seconds,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_store"
+    },
+    {
+      "name": "get_repository_store",
+      "type": "function",
+      "file": "services/retrieval/main.py",
+      "line": 29,
+      "signature": "def get_repository_store()",
+      "docstring": "",
+      "snippet": "def get_repository_store() -> KnowledgeStore:\n    embedder = OllamaEmbeddingClient(\n        settings.ollama_base_url,\n        settings.embedding_model,\n        settings.ollama_timeout_seconds,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_repository_store"
+    },
+    {
+      "name": "health",
+      "type": "endpoint",
+      "file": "services/retrieval/main.py",
+      "line": 43,
+      "signature": "def health(store)",
+      "docstring": "",
+      "snippet": "def health(store: KnowledgeStore = Depends(get_store)) -> HealthResponse:\n    return HealthResponse(\n        service=\"retrieval\",\n        details={\n            \"chunks\": store.count(),",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=health"
+    },
+    {
+      "name": "retrieve",
+      "type": "endpoint",
+      "file": "services/retrieval/main.py",
+      "line": 54,
+      "signature": "def retrieve(request, store)",
+      "docstring": "",
+      "snippet": "def retrieve(\n    request: RetrieveRequest,\n    store: KnowledgeStore = Depends(get_store),\n) -> RetrieveResponse:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=retrieve"
+    },
+    {
+      "name": "retrieve_repository",
+      "type": "endpoint",
+      "file": "services/retrieval/main.py",
+      "line": 85,
+      "signature": "def retrieve_repository(request, store)",
+      "docstring": "",
+      "snippet": "def retrieve_repository(\n    request: RetrieveRequest,\n    store: KnowledgeStore = Depends(get_repository_store),\n) -> RetrieveResponse:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=retrieve_repository"
+    },
+    {
+      "name": "sourcegraph_status",
+      "type": "endpoint",
+      "file": "services/retrieval/main.py",
+      "line": 109,
+      "signature": "def sourcegraph_status()",
+      "docstring": "",
+      "snippet": "def sourcegraph_status() -> dict:\n    from services.retrieval.sourcegraph import get_sourcegraph_engine\n    engine = get_sourcegraph_engine()\n    return {\n        \"status\": \"connected\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=sourcegraph_status"
+    },
+    {
+      "name": "sourcegraph_search",
+      "type": "endpoint",
+      "file": "services/retrieval/main.py",
+      "line": 121,
+      "signature": "def sourcegraph_search(q, limit)",
+      "docstring": "",
+      "snippet": "def sourcegraph_search(q: str = \"orchestrator\", limit: int = 10) -> dict:\n    from services.retrieval.sourcegraph import get_sourcegraph_engine\n    engine = get_sourcegraph_engine()\n    return engine.search(q, limit=limit)\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=sourcegraph_search"
+    },
+    {
+      "name": "_repository_prompt",
+      "type": "function",
+      "file": "services/retrieval/main.py",
+      "line": 127,
+      "signature": "def _repository_prompt(question, sources)",
+      "docstring": "",
+      "snippet": "def _repository_prompt(question: str, sources: list[SourceDto]) -> str:\n    from services.retrieval.sourcegraph import get_sourcegraph_engine\n    engine = get_sourcegraph_engine()\n    symbol_context = engine.get_symbol_context(question)\n    context = \"\\n\\n\".join(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_repository_prompt"
+    },
+    {
+      "name": "SourcegraphSymbol",
+      "type": "class",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 16,
+      "signature": "class SourcegraphSymbol",
+      "docstring": "",
+      "snippet": "class SourcegraphSymbol:\n    def __init__(\n        self,\n        name: str,\n        symbol_type: str,\n        file_path: str,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=SourcegraphSymbol"
+    },
+    {
+      "name": "SourcegraphEngine",
+      "type": "class",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 48,
+      "signature": "class SourcegraphEngine",
+      "docstring": "AST Code Intelligence & Sourcegraph Semantic Query Engine for NoteBuddy.",
+      "snippet": "class SourcegraphEngine:\n    \"\"\"AST Code Intelligence & Sourcegraph Semantic Query Engine for NoteBuddy.\"\"\"\n\n    def __init__(self, repo_root: Optional[Path] = None):\n        if repo_root is None:\n            # Default to NoteBuddy project root",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=SourcegraphEngine"
+    },
+    {
+      "name": "get_sourcegraph_engine",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 228,
+      "signature": "def get_sourcegraph_engine()",
+      "docstring": "",
+      "snippet": "def get_sourcegraph_engine() -> SourcegraphEngine:\n    global _engine\n    if _engine is None:\n        _engine = SourcegraphEngine()\n    return _engine",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_sourcegraph_engine"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 17,
+      "signature": "def __init__(self, name, symbol_type, file_path...)",
+      "docstring": "",
+      "snippet": "    def __init__(\n        self,\n        name: str,\n        symbol_type: str,\n        file_path: str,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "to_dict",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 35,
+      "signature": "def to_dict(self)",
+      "docstring": "",
+      "snippet": "    def to_dict(self) -> Dict[str, Any]:\n        return {\n            \"name\": self.name,\n            \"type\": self.symbol_type,\n            \"file\": self.file_path,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=to_dict"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 51,
+      "signature": "def __init__(self, repo_root)",
+      "docstring": "",
+      "snippet": "    def __init__(self, repo_root: Optional[Path] = None):\n        if repo_root is None:\n            # Default to NoteBuddy project root\n            self.repo_root = Path(__file__).resolve().parents[2]\n        else:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "_index_repository",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 62,
+      "signature": "def _index_repository(self)",
+      "docstring": "Scan repository Python files and build AST symbol index.",
+      "snippet": "    def _index_repository(self) -> None:\n        \"\"\"Scan repository Python files and build AST symbol index.\"\"\"\n        self.symbols.clear()\n        self.file_index.clear()\n        scan_dirs = [\"services\", \"knowledge\", \"guardrails\", \"scripts\", \"app\"]",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_index_repository"
+    },
+    {
+      "name": "_parse_file_ast",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 84,
+      "signature": "def _parse_file_ast(self, rel_path, content)",
+      "docstring": "",
+      "snippet": "    def _parse_file_ast(self, rel_path: str, content: str) -> None:\n        try:\n            tree = ast.parse(content, filename=rel_path)\n        except SyntaxError:\n            return",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_parse_file_ast"
+    },
+    {
+      "name": "search",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 135,
+      "signature": "def search(self, query, limit)",
+      "docstring": "Execute a Sourcegraph-style query against repository symbol index.\n\nSupports queries like:\n  - 'type:symbol orchestrator'\n  - 'type:class KnowledgeStore'\n  - 'type:endpoint retrieve'\n  - 'path:guardrails'\n  - 'run_notebuddy'",
+      "snippet": "    def search(self, query: str, limit: int = 10) -> Dict[str, Any]:\n        \"\"\"Execute a Sourcegraph-style query against repository symbol index.\n        \n        Supports queries like:\n          - 'type:symbol orchestrator'",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=search"
+    },
+    {
+      "name": "get_symbol_context",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 196,
+      "signature": "def get_symbol_context(self, question, max_symbols)",
+      "docstring": "Extract high-relevance AST symbol definitions to augment RAG context.",
+      "snippet": "    def get_symbol_context(self, question: str, max_symbols: int = 4) -> str:\n        \"\"\"Extract high-relevance AST symbol definitions to augment RAG context.\"\"\"\n        keywords = re.findall(r\"\\b[A-Za-z_][A-Za-z0-9_]{2,}\\b\", question)\n        found: List[SourcegraphSymbol] = []\n        seen = set()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_symbol_context"
+    },
+    {
+      "name": "score",
+      "type": "function",
+      "file": "services/retrieval/sourcegraph.py",
+      "line": 174,
+      "signature": "def score(sym)",
+      "docstring": "",
+      "snippet": "        def score(sym: SourcegraphSymbol) -> int:\n            if sym.name.lower() == term_lower:\n                return 0\n            if sym.name.lower().startswith(term_lower):\n                return 1",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=score"
+    },
+    {
+      "name": "chunk_units",
+      "type": "function",
+      "file": "knowledge/chunking.py",
+      "line": 12,
+      "signature": "def chunk_units(units, max_characters, overlap_characters)",
+      "docstring": "",
+      "snippet": "def chunk_units(\n    units: list[DocumentUnit],\n    max_characters: int = 1_200,\n    overlap_characters: int = 200,\n) -> list[Chunk]:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=chunk_units"
+    },
+    {
+      "name": "_citation",
+      "type": "function",
+      "file": "knowledge/chunking.py",
+      "line": 44,
+      "signature": "def _citation(unit)",
+      "docstring": "",
+      "snippet": "def _citation(unit: DocumentUnit) -> str:\n    if unit.page is not None:\n        return f\"{unit.source}, page/slide {unit.page}\"\n    return f\"{unit.source}, section: {unit.section}\"\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_citation"
+    },
+    {
+      "name": "_split_text",
+      "type": "function",
+      "file": "knowledge/chunking.py",
+      "line": 50,
+      "signature": "def _split_text(text, limit, overlap)",
+      "docstring": "",
+      "snippet": "def _split_text(text: str, limit: int, overlap: int) -> list[str]:\n    paragraphs = [part.strip() for part in PARAGRAPH_RE.split(text) if part.strip()]\n    if not paragraphs:\n        return []\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_split_text"
+    },
+    {
+      "name": "_split_oversized",
+      "type": "function",
+      "file": "knowledge/chunking.py",
+      "line": 76,
+      "signature": "def _split_oversized(text, limit)",
+      "docstring": "",
+      "snippet": "def _split_oversized(text: str, limit: int) -> list[str]:\n    if len(text) <= limit:\n        return [text]\n    words = text.split()\n    pieces: list[str] = []",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_split_oversized"
+    },
+    {
+      "name": "_overlap_tail",
+      "type": "function",
+      "file": "knowledge/chunking.py",
+      "line": 97,
+      "signature": "def _overlap_tail(text, overlap)",
+      "docstring": "",
+      "snippet": "def _overlap_tail(text: str, overlap: int) -> str:\n    if overlap == 0:\n        return \"\"\n    tail = text[-overlap:]\n    first_space = tail.find(\" \")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_overlap_tail"
+    },
+    {
+      "name": "EmbeddingError",
+      "type": "class",
+      "file": "knowledge/embeddings.py",
+      "line": 8,
+      "signature": "class EmbeddingError(RuntimeError)",
+      "docstring": "Raised when Ollama cannot create embeddings.",
+      "snippet": "class EmbeddingError(RuntimeError):\n    \"\"\"Raised when Ollama cannot create embeddings.\"\"\"\n\n\nclass OllamaEmbeddingClient:\n    def __init__(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=EmbeddingError"
+    },
+    {
+      "name": "OllamaEmbeddingClient",
+      "type": "class",
+      "file": "knowledge/embeddings.py",
+      "line": 12,
+      "signature": "class OllamaEmbeddingClient",
+      "docstring": "",
+      "snippet": "class OllamaEmbeddingClient:\n    def __init__(\n        self,\n        base_url: str,\n        model: str = \"nomic-embed-text\",\n        timeout_seconds: float = 120,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OllamaEmbeddingClient"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "knowledge/embeddings.py",
+      "line": 13,
+      "signature": "def __init__(self, base_url, model, timeout_seconds)",
+      "docstring": "",
+      "snippet": "    def __init__(\n        self,\n        base_url: str,\n        model: str = \"nomic-embed-text\",\n        timeout_seconds: float = 120,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "embed",
+      "type": "function",
+      "file": "knowledge/embeddings.py",
+      "line": 23,
+      "signature": "def embed(self, texts)",
+      "docstring": "",
+      "snippet": "    def embed(self, texts: list[str]) -> list[list[float]]:\n        if not texts:\n            return []\n        payload: dict[str, Any] = {\"model\": self.model, \"input\": texts}\n        try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=embed"
+    },
+    {
+      "name": "IngestionReport",
+      "type": "class",
+      "file": "knowledge/ingest.py",
+      "line": 12,
+      "signature": "class IngestionReport",
+      "docstring": "",
+      "snippet": "class IngestionReport:\n    documents: int\n    units: int\n    chunks: int\n    collection_total: int\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=IngestionReport"
+    },
+    {
+      "name": "ingest_directory",
+      "type": "function",
+      "file": "knowledge/ingest.py",
+      "line": 19,
+      "signature": "def ingest_directory(document_directory, store)",
+      "docstring": "",
+      "snippet": "def ingest_directory(\n    document_directory: Path,\n    store: KnowledgeStore,\n    *,\n    reset: bool = False,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ingest_directory"
+    },
+    {
+      "name": "discover_documents",
+      "type": "function",
+      "file": "knowledge/loaders.py",
+      "line": 15,
+      "signature": "def discover_documents(directory)",
+      "docstring": "",
+      "snippet": "def discover_documents(directory: Path) -> list[Path]:\n    return sorted(\n        path\n        for path in directory.rglob(\"*\")\n        if path.is_file() and path.suffix.lower() in SUPPORTED_EXTENSIONS",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=discover_documents"
+    },
+    {
+      "name": "load_document",
+      "type": "function",
+      "file": "knowledge/loaders.py",
+      "line": 23,
+      "signature": "def load_document(path, document_root)",
+      "docstring": "",
+      "snippet": "def load_document(path: Path, document_root: Path) -> list[DocumentUnit]:\n    source = path.relative_to(document_root).as_posix()\n    suffix = path.suffix.lower()\n    if suffix == \".pdf\":\n        return _load_pdf(path, source)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=load_document"
+    },
+    {
+      "name": "_load_pdf",
+      "type": "function",
+      "file": "knowledge/loaders.py",
+      "line": 33,
+      "signature": "def _load_pdf(path, source)",
+      "docstring": "",
+      "snippet": "def _load_pdf(path: Path, source: str) -> list[DocumentUnit]:\n    units: list[DocumentUnit] = []\n    with pymupdf.open(path) as document:\n        for page_number, page in enumerate(document, start=1):\n            text = page.get_text(\"text\", sort=True).strip()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_load_pdf"
+    },
+    {
+      "name": "_load_text",
+      "type": "function",
+      "file": "knowledge/loaders.py",
+      "line": 50,
+      "signature": "def _load_text(path, source)",
+      "docstring": "",
+      "snippet": "def _load_text(path: Path, source: str) -> list[DocumentUnit]:\n    text = path.read_text(encoding=\"utf-8\").strip()\n    if not text:\n        return []\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_load_text"
+    },
+    {
+      "name": "flush",
+      "type": "function",
+      "file": "knowledge/loaders.py",
+      "line": 59,
+      "signature": "def flush()",
+      "docstring": "",
+      "snippet": "    def flush() -> None:\n        section_text = \"\\n\".join(current_lines).strip()\n        if section_text:\n            units.append(\n                DocumentUnit(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=flush"
+    },
+    {
+      "name": "DocumentUnit",
+      "type": "class",
+      "file": "knowledge/models.py",
+      "line": 8,
+      "signature": "class DocumentUnit",
+      "docstring": "Text contained by a citation-safe source boundary.",
+      "snippet": "class DocumentUnit:\n    \"\"\"Text contained by a citation-safe source boundary.\"\"\"\n\n    text: str\n    source: str\n    page: int | None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=DocumentUnit"
+    },
+    {
+      "name": "Chunk",
+      "type": "class",
+      "file": "knowledge/models.py",
+      "line": 18,
+      "signature": "class Chunk",
+      "docstring": "A vector-store document with traceable source metadata.",
+      "snippet": "class Chunk:\n    \"\"\"A vector-store document with traceable source metadata.\"\"\"\n\n    id: str\n    text: str\n    source: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=Chunk"
+    },
+    {
+      "name": "RetrievedChunk",
+      "type": "class",
+      "file": "knowledge/models.py",
+      "line": 41,
+      "signature": "class RetrievedChunk",
+      "docstring": "",
+      "snippet": "class RetrievedChunk:\n    text: str\n    source: str\n    page: int | None\n    section: str\n    citation: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RetrievedChunk"
+    },
+    {
+      "name": "metadata",
+      "type": "function",
+      "file": "knowledge/models.py",
+      "line": 29,
+      "signature": "def metadata(self)",
+      "docstring": "",
+      "snippet": "    def metadata(self) -> dict[str, Any]:\n        # Chroma metadata values cannot be None.\n        return {\n            \"source\": self.source,\n            \"page\": self.page if self.page is not None else 0,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=metadata"
+    },
+    {
+      "name": "relevance_score",
+      "type": "function",
+      "file": "knowledge/models.py",
+      "line": 50,
+      "signature": "def relevance_score(self)",
+      "docstring": "",
+      "snippet": "    def relevance_score(self) -> float:\n        # Cosine distance is 0 for identical vectors and approaches 2 for opposites.\n        return max(0.0, min(1.0, 1.0 - self.distance / 2.0))",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=relevance_score"
+    },
+    {
+      "name": "_is_grounded_in_context",
+      "type": "function",
+      "file": "knowledge/rag.py",
+      "line": 23,
+      "signature": "def _is_grounded_in_context(answer, context, threshold)",
+      "docstring": "",
+      "snippet": "def _is_grounded_in_context(answer: str, context: str, threshold: float = 0.20) -> bool:\n    tokens = set(TOKEN_RE.findall(answer.casefold())) - STOP_WORDS\n    if not tokens:\n        return True\n    supported = set(TOKEN_RE.findall(context.casefold())) - STOP_WORDS",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_is_grounded_in_context"
+    },
+    {
+      "name": "RagService",
+      "type": "class",
+      "file": "knowledge/rag.py",
+      "line": 31,
+      "signature": "class RagService",
+      "docstring": "",
+      "snippet": "class RagService:\n    def __init__(\n        self,\n        store: KnowledgeStore,\n        llm: OllamaClient,\n        top_k: int = 4,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RagService"
+    },
+    {
+      "name": "_is_refusal",
+      "type": "function",
+      "file": "knowledge/rag.py",
+      "line": 54,
+      "signature": "def _is_refusal(answer)",
+      "docstring": "",
+      "snippet": "def _is_refusal(answer: str) -> bool:\n    lowered = answer.lower()\n    return (\n        NO_CONTEXT_ANSWER.lower() in lowered\n        or \"couldn't find relevant information\" in lowered",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_is_refusal"
+    },
+    {
+      "name": "ensure_citation",
+      "type": "function",
+      "file": "knowledge/rag.py",
+      "line": 69,
+      "signature": "def ensure_citation(answer, sources)",
+      "docstring": "Guarantee at least one exact citation even when the model omits formatting.",
+      "snippet": "def ensure_citation(answer: str, sources: list[RetrievedChunk]) -> str:\n    \"\"\"Guarantee at least one exact citation even when the model omits formatting.\"\"\"\n    if _is_refusal(answer):\n        return answer\n    if any(f\"[{source.citation}]\" in answer for source in sources):",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ensure_citation"
+    },
+    {
+      "name": "build_grounded_prompt",
+      "type": "function",
+      "file": "knowledge/rag.py",
+      "line": 78,
+      "signature": "def build_grounded_prompt(question, sources)",
+      "docstring": "",
+      "snippet": "def build_grounded_prompt(question: str, sources: list[RetrievedChunk]) -> str:\n    context_blocks = []\n    for index, source in enumerate(sources, start=1):\n        context_blocks.append(\n            f\"[Source {index}: {source.citation}]\\n{source.text}\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=build_grounded_prompt"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "knowledge/rag.py",
+      "line": 32,
+      "signature": "def __init__(self, store, llm, top_k)",
+      "docstring": "",
+      "snippet": "    def __init__(\n        self,\n        store: KnowledgeStore,\n        llm: OllamaClient,\n        top_k: int = 4,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "answer",
+      "type": "function",
+      "file": "knowledge/rag.py",
+      "line": 42,
+      "signature": "def answer(self, question)",
+      "docstring": "",
+      "snippet": "    async def answer(self, question: str) -> tuple[str, list[RetrievedChunk]]:\n        sources = self.store.query(question, self.top_k)\n        if not sources:\n            return NO_CONTEXT_ANSWER, []\n        prompt = build_grounded_prompt(question, sources)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=answer"
+    },
+    {
+      "name": "Embedder",
+      "type": "class",
+      "file": "knowledge/store.py",
+      "line": 12,
+      "signature": "class Embedder(Protocol)",
+      "docstring": "",
+      "snippet": "class Embedder(Protocol):\n    model: str\n\n    def embed(self, texts: list[str]) -> list[list[float]]: ...\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=Embedder"
+    },
+    {
+      "name": "KnowledgeStore",
+      "type": "class",
+      "file": "knowledge/store.py",
+      "line": 18,
+      "signature": "class KnowledgeStore",
+      "docstring": "",
+      "snippet": "class KnowledgeStore:\n    def __init__(\n        self,\n        persist_directory: Path,\n        embedder: Embedder,\n        collection_name: str = \"course_materials\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=KnowledgeStore"
+    },
+    {
+      "name": "embed",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 15,
+      "signature": "def embed(self, texts)",
+      "docstring": "",
+      "snippet": "    def embed(self, texts: list[str]) -> list[list[float]]: ...\n\n\nclass KnowledgeStore:\n    def __init__(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=embed"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 19,
+      "signature": "def __init__(self, persist_directory, embedder, collection_name)",
+      "docstring": "",
+      "snippet": "    def __init__(\n        self,\n        persist_directory: Path,\n        embedder: Embedder,\n        collection_name: str = \"course_materials\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "reset",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 45,
+      "signature": "def reset(self)",
+      "docstring": "",
+      "snippet": "    def reset(self) -> None:\n        try:\n            self.client.delete_collection(self.collection_name)\n        except Exception as exc:\n            if \"does not exist\" not in str(exc).lower():",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=reset"
+    },
+    {
+      "name": "upsert",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 59,
+      "signature": "def upsert(self, chunks, batch_size)",
+      "docstring": "",
+      "snippet": "    def upsert(self, chunks: list[Chunk], batch_size: int = 32) -> int:\n        for start in range(0, len(chunks), batch_size):\n            batch = chunks[start : start + batch_size]\n            texts = [chunk.text for chunk in batch]\n            self.collection.upsert(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=upsert"
+    },
+    {
+      "name": "count",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 71,
+      "signature": "def count(self)",
+      "docstring": "",
+      "snippet": "    def count(self) -> int:\n        return self.collection.count()\n\n    def delete_source(self, source: str) -> None:\n        \"\"\"Remove only this document's vectors without re-embedding other files.\"\"\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=count"
+    },
+    {
+      "name": "delete_source",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 74,
+      "signature": "def delete_source(self, source)",
+      "docstring": "Remove only this document's vectors without re-embedding other files.",
+      "snippet": "    def delete_source(self, source: str) -> None:\n        \"\"\"Remove only this document's vectors without re-embedding other files.\"\"\"\n        self.collection.delete(where={\"source\": source})\n\n    def sample(self, limit: int = 5) -> dict:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=delete_source"
+    },
+    {
+      "name": "sample",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 78,
+      "signature": "def sample(self, limit)",
+      "docstring": "",
+      "snippet": "    def sample(self, limit: int = 5) -> dict:\n        return self.collection.get(limit=limit, include=[\"documents\", \"metadatas\"])\n\n    def query(self, question: str, top_k: int = 4) -> list[RetrievedChunk]:\n        if self.count() == 0:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=sample"
+    },
+    {
+      "name": "query",
+      "type": "function",
+      "file": "knowledge/store.py",
+      "line": 81,
+      "signature": "def query(self, question, top_k)",
+      "docstring": "",
+      "snippet": "    def query(self, question: str, top_k: int = 4) -> list[RetrievedChunk]:\n        if self.count() == 0:\n            return []\n        query_embedding = self.embedder.embed([question])[0]\n        result = self.collection.query(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=query"
+    },
+    {
+      "name": "GuardrailEngine",
+      "type": "class",
+      "file": "guardrails/engine.py",
+      "line": 14,
+      "signature": "class GuardrailEngine",
+      "docstring": "Orchestrates comprehensive safety and quality checks across the RAG lifecycle.",
+      "snippet": "class GuardrailEngine:\n    \"\"\"Orchestrates comprehensive safety and quality checks across the RAG lifecycle.\"\"\"\n\n    @staticmethod\n    def evaluate_input(question: str) -> GuardrailEvaluation:\n        start = time.perf_counter()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailEngine"
+    },
+    {
+      "name": "evaluate_input",
+      "type": "function",
+      "file": "guardrails/engine.py",
+      "line": 18,
+      "signature": "def evaluate_input(question)",
+      "docstring": "",
+      "snippet": "    def evaluate_input(question: str) -> GuardrailEvaluation:\n        start = time.perf_counter()\n        checks: list[GuardrailCheckResult] = [\n            check_input_length(question),\n            check_prompt_injection(question),",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=evaluate_input"
+    },
+    {
+      "name": "evaluate_retrieval",
+      "type": "function",
+      "file": "guardrails/engine.py",
+      "line": 48,
+      "signature": "def evaluate_retrieval(sources, threshold)",
+      "docstring": "",
+      "snippet": "    def evaluate_retrieval(sources: list[SourceDto], threshold: float = 0.25) -> GuardrailEvaluation:\n        start = time.perf_counter()\n        check = check_retrieval_confidence(sources, threshold)\n        latency_ms = (time.perf_counter() - start) * 1000\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=evaluate_retrieval"
+    },
+    {
+      "name": "evaluate_output",
+      "type": "function",
+      "file": "guardrails/engine.py",
+      "line": 72,
+      "signature": "def evaluate_output(answer, context, is_refusal)",
+      "docstring": "",
+      "snippet": "    def evaluate_output(\n        answer: str,\n        context: str,\n        is_refusal: bool,\n    ) -> GuardrailEvaluation:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=evaluate_output"
+    },
+    {
+      "name": "check_input_length",
+      "type": "function",
+      "file": "guardrails/input_guardrails.py",
+      "line": 38,
+      "signature": "def check_input_length(question)",
+      "docstring": "",
+      "snippet": "def check_input_length(question: str) -> GuardrailCheckResult:\n    start = time.perf_counter()\n    cleaned = question.strip()\n    latency_ms = (time.perf_counter() - start) * 1000\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=check_input_length"
+    },
+    {
+      "name": "check_prompt_injection",
+      "type": "function",
+      "file": "guardrails/input_guardrails.py",
+      "line": 76,
+      "signature": "def check_prompt_injection(question)",
+      "docstring": "",
+      "snippet": "def check_prompt_injection(question: str) -> GuardrailCheckResult:\n    start = time.perf_counter()\n    for pattern in INJECTION_PATTERNS:\n        match = pattern.search(question)\n        if match:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=check_prompt_injection"
+    },
+    {
+      "name": "check_scope",
+      "type": "function",
+      "file": "guardrails/input_guardrails.py",
+      "line": 114,
+      "signature": "def check_scope(question)",
+      "docstring": "",
+      "snippet": "def check_scope(question: str) -> GuardrailCheckResult:\n    start = time.perf_counter()\n    for pattern, description in OUT_OF_SCOPE_PATTERNS:\n        match = pattern.search(question)\n        if match:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=check_scope"
+    },
+    {
+      "name": "GuardrailAction",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 10,
+      "signature": "class GuardrailAction(str, Enum)",
+      "docstring": "",
+      "snippet": "class GuardrailAction(str, Enum):\n    ALLOWED = \"allowed\"\n    REJECTED = \"rejected\"\n    INTERCEPTED_REFUSAL = \"intercepted_refusal\"\n    SANITIZED = \"sanitized\"\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailAction"
+    },
+    {
+      "name": "GuardrailStage",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 17,
+      "signature": "class GuardrailStage(str, Enum)",
+      "docstring": "",
+      "snippet": "class GuardrailStage(str, Enum):\n    INPUT = \"input\"\n    RETRIEVAL = \"retrieval\"\n    OUTPUT = \"output\"\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailStage"
+    },
+    {
+      "name": "GuardrailCheckResult",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 23,
+      "signature": "class GuardrailCheckResult(BaseModel)",
+      "docstring": "",
+      "snippet": "class GuardrailCheckResult(BaseModel):\n    name: str\n    stage: GuardrailStage\n    passed: bool\n    action: GuardrailAction\n    reason: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailCheckResult"
+    },
+    {
+      "name": "GuardrailEvaluation",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 33,
+      "signature": "class GuardrailEvaluation(BaseModel)",
+      "docstring": "",
+      "snippet": "class GuardrailEvaluation(BaseModel):\n    passed: bool\n    action: GuardrailAction\n    primary_reason: str | None = None\n    checks: list[GuardrailCheckResult] = Field(default_factory=list)\n    sanitized_output: str | None = None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GuardrailEvaluation"
+    },
+    {
+      "name": "OutputTestCondition",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 42,
+      "signature": "class OutputTestCondition(str, Enum)",
+      "docstring": "",
+      "snippet": "class OutputTestCondition(str, Enum):\n    RELEVANCE = \"relevance\"\n    CONTEXT_GROUNDEDNESS = \"context_groundedness\"\n    NO_UNSUPPORTED_CLAIMS = \"no_unsupported_claims\"\n    FORMAT_COMPLIANCE = \"format_compliance\"\n    ANSWERS_WHEN_SUFFICIENT = \"answers_when_sufficient\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OutputTestCondition"
+    },
+    {
+      "name": "SingleConditionResult",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 51,
+      "signature": "class SingleConditionResult(BaseModel)",
+      "docstring": "",
+      "snippet": "class SingleConditionResult(BaseModel):\n    condition: OutputTestCondition\n    passed: bool\n    score: float\n    threshold: float\n    description: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=SingleConditionResult"
+    },
+    {
+      "name": "OutputTestCaseResult",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 60,
+      "signature": "class OutputTestCaseResult(BaseModel)",
+      "docstring": "",
+      "snippet": "class OutputTestCaseResult(BaseModel):\n    test_id: str\n    category: str\n    question: str\n    context_available: bool\n    answer: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OutputTestCaseResult"
+    },
+    {
+      "name": "OutputTestSuiteSummary",
+      "type": "class",
+      "file": "guardrails/models.py",
+      "line": 71,
+      "signature": "class OutputTestSuiteSummary(BaseModel)",
+      "docstring": "",
+      "snippet": "class OutputTestSuiteSummary(BaseModel):\n    total_tests: int\n    passed_tests: int\n    failed_tests: int\n    pass_rate: float\n    condition_pass_rates: dict[str, float]",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OutputTestSuiteSummary"
+    },
+    {
+      "name": "sanitize_prompt_leakage",
+      "type": "function",
+      "file": "guardrails/output_guardrails.py",
+      "line": 26,
+      "signature": "def sanitize_prompt_leakage(answer)",
+      "docstring": "Removes internal model artifacts or prompt wrappers.",
+      "snippet": "def sanitize_prompt_leakage(answer: str) -> tuple[str, bool]:\n    \"\"\"Removes internal model artifacts or prompt wrappers.\"\"\"\n    cleaned = answer\n    modified = False\n    for pattern in PROMPT_LEAK_PATTERNS:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=sanitize_prompt_leakage"
+    },
+    {
+      "name": "check_output_format",
+      "type": "function",
+      "file": "guardrails/output_guardrails.py",
+      "line": 37,
+      "signature": "def check_output_format(answer, is_refusal)",
+      "docstring": "Checks that the generated output follows the expected academic response format.",
+      "snippet": "def check_output_format(answer: str, is_refusal: bool) -> GuardrailCheckResult:\n    \"\"\"Checks that the generated output follows the expected academic response format.\"\"\"\n    start = time.perf_counter()\n    latency_ms = (time.perf_counter() - start) * 1000\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=check_output_format"
+    },
+    {
+      "name": "check_unsupported_claims",
+      "type": "function",
+      "file": "guardrails/output_guardrails.py",
+      "line": 76,
+      "signature": "def check_unsupported_claims(answer, context, is_refusal)",
+      "docstring": "Detects numeric facts, percentages, or dates present in the answer but absent from context.",
+      "snippet": "def check_unsupported_claims(\n    answer: str,\n    context: str,\n    is_refusal: bool,\n) -> GuardrailCheckResult:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=check_unsupported_claims"
+    },
+    {
+      "name": "load_test_cases",
+      "type": "function",
+      "file": "guardrails/output_testing.py",
+      "line": 33,
+      "signature": "def load_test_cases()",
+      "docstring": "",
+      "snippet": "def load_test_cases() -> list[dict[str, Any]]:\n    return json.loads(TEST_CASES_PATH.read_text(encoding=\"utf-8\"))\n\n\ndef is_refusal_answer(answer: str) -> bool:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=load_test_cases"
+    },
+    {
+      "name": "is_refusal_answer",
+      "type": "function",
+      "file": "guardrails/output_testing.py",
+      "line": 37,
+      "signature": "def is_refusal_answer(answer)",
+      "docstring": "",
+      "snippet": "def is_refusal_answer(answer: str) -> bool:\n    lowered = answer.lower()\n    return (\n        NO_CONTEXT_ANSWER.lower() in lowered\n        or \"cannot find\" in lowered",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=is_refusal_answer"
+    },
+    {
+      "name": "evaluate_output_conditions",
+      "type": "function",
+      "file": "guardrails/output_testing.py",
+      "line": 53,
+      "signature": "def evaluate_output_conditions(question, answer, context, context_available...)",
+      "docstring": "Evaluates the 6 fundamental output testing conditions.",
+      "snippet": "def evaluate_output_conditions(\n    question: str,\n    answer: str,\n    context: str,\n    context_available: bool,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=evaluate_output_conditions"
+    },
+    {
+      "name": "check_retrieval_confidence",
+      "type": "function",
+      "file": "guardrails/retrieval_guardrails.py",
+      "line": 12,
+      "signature": "def check_retrieval_confidence(sources, threshold)",
+      "docstring": "Verifies that retrieved chunks have sufficient relevance to prevent hallucination.",
+      "snippet": "def check_retrieval_confidence(\n    sources: list[SourceDto],\n    threshold: float = MIN_CONFIDENCE_THRESHOLD,\n) -> GuardrailCheckResult:\n    \"\"\"Verifies that retrieved chunks have sufficient relevance to prevent hallucination.\"\"\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=check_retrieval_confidence"
+    },
+    {
+      "name": "NoteBuddyHandler",
+      "type": "class",
+      "file": "scripts/dev_server.py",
+      "line": 32,
+      "signature": "class NoteBuddyHandler(SimpleHTTPRequestHandler)",
+      "docstring": "Static-file handler with a same-origin Application API gateway.",
+      "snippet": "class NoteBuddyHandler(SimpleHTTPRequestHandler):\n    \"\"\"Static-file handler with a same-origin Application API gateway.\"\"\"\n\n    def end_headers(self) -> None:\n        self.send_header(\"Cache-Control\", \"no-cache, no-store, must-revalidate\")\n        self.send_header(\"Pragma\", \"no-cache\")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=NoteBuddyHandler"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 116,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> None:\n    handler = partial(NoteBuddyHandler, directory=str(UI_ROOT))\n    server = ThreadingHTTPServer((HOST, PORT), handler)\n    print(f\"NoteBuddy website: http://{HOST}:{PORT}\")\n    print(f\"Same-origin API proxy: /api -> {APPLICATION_URL}\")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "end_headers",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 35,
+      "signature": "def end_headers(self)",
+      "docstring": "",
+      "snippet": "    def end_headers(self) -> None:\n        self.send_header(\"Cache-Control\", \"no-cache, no-store, must-revalidate\")\n        self.send_header(\"Pragma\", \"no-cache\")\n        self.send_header(\"Expires\", \"0\")\n        super().end_headers()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=end_headers"
+    },
+    {
+      "name": "do_GET",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 41,
+      "signature": "def do_GET(self)",
+      "docstring": "",
+      "snippet": "    def do_GET(self) -> None:  # noqa: N802\n        if self.path == \"/healthz\":\n            self.send_response(200)\n            self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n            self.end_headers()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=do_GET"
+    },
+    {
+      "name": "do_POST",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 53,
+      "signature": "def do_POST(self)",
+      "docstring": "",
+      "snippet": "    def do_POST(self) -> None:  # noqa: N802\n        if self._is_api_path():\n            self._proxy()\n            return\n        self.send_error(404)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=do_POST"
+    },
+    {
+      "name": "do_OPTIONS",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 59,
+      "signature": "def do_OPTIONS(self)",
+      "docstring": "",
+      "snippet": "    def do_OPTIONS(self) -> None:  # noqa: N802\n        if self._is_api_path():\n            self._proxy()\n            return\n        self.send_error(404)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=do_OPTIONS"
+    },
+    {
+      "name": "_proxy",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 65,
+      "signature": "def _proxy(self)",
+      "docstring": "",
+      "snippet": "    def _proxy(self) -> None:\n        prefixes = {\n            \"/api/\": APPLICATION_URL,\n            \"/retrieval-api/\": RETRIEVAL_URL,\n            \"/llm-api/\": LLM_URL,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_proxy"
+    },
+    {
+      "name": "_is_api_path",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 103,
+      "signature": "def _is_api_path(self)",
+      "docstring": "",
+      "snippet": "    def _is_api_path(self) -> bool:\n        return self.path.startswith((\"/api/\", \"/retrieval-api/\", \"/llm-api/\", \"/data-api/\"))\n\n    def _forward_response(self, status: int, headers, body: bytes) -> None:\n        self.send_response(status)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_is_api_path"
+    },
+    {
+      "name": "_forward_response",
+      "type": "function",
+      "file": "scripts/dev_server.py",
+      "line": 106,
+      "signature": "def _forward_response(self, status, headers, body)",
+      "docstring": "",
+      "snippet": "    def _forward_response(self, status: int, headers, body: bytes) -> None:\n        self.send_response(status)\n        for key, value in headers.items():\n            if key.lower() not in HOP_BY_HOP_HEADERS and key.lower() != \"content-length\":\n                self.send_header(key, value)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_forward_response"
+    },
+    {
+      "name": "generate_benchmark_report",
+      "type": "function",
+      "file": "scripts/generate_guardrails_report.py",
+      "line": 22,
+      "signature": "def generate_benchmark_report()",
+      "docstring": "",
+      "snippet": "def generate_benchmark_report() -> dict:\n    cases = load_test_cases()\n    output_dir = PROJECT_ROOT / \"data\" / \"evaluations\"\n    output_dir.mkdir(parents=True, exist_ok=True)\n    report_file = output_dir / \"guardrails_report.json\"",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=generate_benchmark_report"
+    },
+    {
+      "name": "parse_args",
+      "type": "function",
+      "file": "scripts/ingest_documents.py",
+      "line": 20,
+      "signature": "def parse_args()",
+      "docstring": "",
+      "snippet": "def parse_args() -> argparse.Namespace:\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument(\n        \"--documents\",\n        type=Path,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=parse_args"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/ingest_documents.py",
+      "line": 38,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> None:\n    load_dotenv(PROJECT_ROOT / \".env\")\n    args = parse_args()\n    embedder = OllamaEmbeddingClient(\n        base_url=os.getenv(\"OLLAMA_BASE_URL\", \"http://localhost:11434\"),",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/inspect_knowledge_base.py",
+      "line": 16,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> None:\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument(\"--limit\", type=int, default=5)\n    parser.add_argument(\n        \"--database\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/run_comparison.py",
+      "line": 10,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> None:\n    parser = argparse.ArgumentParser(description=__doc__)\n    parser.add_argument(\n        \"question\",\n        nargs=\"?\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "verify_ollama",
+      "type": "function",
+      "file": "scripts/run_notebuddy.py",
+      "line": 20,
+      "signature": "def verify_ollama()",
+      "docstring": "",
+      "snippet": "def verify_ollama() -> None:\n    try:\n        with urlopen(\"http://127.0.0.1:11434/api/version\", timeout=3) as response:\n            if response.status != 200:\n                raise RuntimeError(f\"Ollama returned HTTP {response.status}\")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=verify_ollama"
+    },
+    {
+      "name": "wait_for_url",
+      "type": "function",
+      "file": "scripts/run_notebuddy.py",
+      "line": 32,
+      "signature": "def wait_for_url(url, service_name, timeout_seconds)",
+      "docstring": "Wait until a local dependency accepts HTTP requests.",
+      "snippet": "def wait_for_url(url: str, service_name: str, timeout_seconds: int = 30) -> None:\n    \"\"\"Wait until a local dependency accepts HTTP requests.\"\"\"\n    deadline = time.monotonic() + timeout_seconds\n    while time.monotonic() < deadline:\n        try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=wait_for_url"
+    },
+    {
+      "name": "command",
+      "type": "function",
+      "file": "scripts/run_notebuddy.py",
+      "line": 45,
+      "signature": "def command(module, port)",
+      "docstring": "",
+      "snippet": "def command(module: str, port: int) -> list[str]:\n    return [\n        PYTHON,\n        \"-m\",\n        \"uvicorn\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=command"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/run_notebuddy.py",
+      "line": 58,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> None:\n    verify_ollama()\n    base_env = os.environ.copy()\n    base_env.setdefault(\"OLLAMA_BASE_URL\", \"http://127.0.0.1:11434\")\n    base_env.setdefault(\"CHROMA_PATH\", \"data/chroma\")",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/run_week4_evaluation.py",
+      "line": 16,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> None:\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--base-url\", default=\"http://127.0.0.1\")\n    parser.add_argument(\"--output\", type=Path, default=Path(\"data/evaluations\"))\n    parser.add_argument(\"--models\", nargs=\"+\", default=DEFAULT_MODELS)",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "request_json",
+      "type": "function",
+      "file": "scripts/verify_deployment.py",
+      "line": 11,
+      "signature": "def request_json(url, payload, timeout)",
+      "docstring": "",
+      "snippet": "def request_json(url: str, payload: dict | None = None, timeout: int = 360) -> dict:\n    body = json.dumps(payload).encode() if payload is not None else None\n    headers = {\"Content-Type\": \"application/json\"} if body else {}\n    request = Request(url, data=body, headers=headers, method=\"POST\" if body else \"GET\")\n    with urlopen(request, timeout=timeout) as response:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=request_json"
+    },
+    {
+      "name": "request_text",
+      "type": "function",
+      "file": "scripts/verify_deployment.py",
+      "line": 19,
+      "signature": "def request_text(url, timeout)",
+      "docstring": "",
+      "snippet": "def request_text(url: str, timeout: int = 30) -> str:\n    with urlopen(url, timeout=timeout) as response:\n        return response.read().decode(\"utf-8\")\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=request_text"
+    },
+    {
+      "name": "main",
+      "type": "function",
+      "file": "scripts/verify_deployment.py",
+      "line": 24,
+      "signature": "def main()",
+      "docstring": "",
+      "snippet": "def main() -> int:\n    parser = argparse.ArgumentParser(\n        description=\"Verify website, private services, knowledge base, Ollama, RAG, and citations.\"\n    )\n    parser.add_argument(",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=main"
+    },
+    {
+      "name": "Settings",
+      "type": "class",
+      "file": "app/config.py",
+      "line": 14,
+      "signature": "class Settings",
+      "docstring": "",
+      "snippet": "class Settings:\n    ollama_base_url: str = os.getenv(\"OLLAMA_BASE_URL\", \"http://localhost:11434\")\n    ollama_model: str = os.getenv(\"OLLAMA_MODEL\", \"codellama\")\n    embedding_model: str = os.getenv(\"EMBEDDING_MODEL\", \"nomic-embed-text\")\n    ollama_timeout_seconds: float = float(os.getenv(\"OLLAMA_TIMEOUT_SECONDS\", \"120\"))\n    chroma_path: Path = Path(os.getenv(\"CHROMA_PATH\", \"data/chroma\"))",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=Settings"
+    },
+    {
+      "name": "get_ollama_client",
+      "type": "function",
+      "file": "app/main.py",
+      "line": 27,
+      "signature": "def get_ollama_client()",
+      "docstring": "",
+      "snippet": "def get_ollama_client() -> OllamaClient:\n    return OllamaClient(\n        base_url=settings.ollama_base_url,\n        model=settings.ollama_model,\n        timeout_seconds=settings.ollama_timeout_seconds,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_ollama_client"
+    },
+    {
+      "name": "get_rag_service",
+      "type": "function",
+      "file": "app/main.py",
+      "line": 35,
+      "signature": "def get_rag_service()",
+      "docstring": "",
+      "snippet": "def get_rag_service() -> RagService:\n    llm = get_ollama_client()\n    embedder = OllamaEmbeddingClient(\n        base_url=settings.ollama_base_url,\n        model=settings.embedding_model,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=get_rag_service"
+    },
+    {
+      "name": "_rag_response",
+      "type": "function",
+      "file": "app/main.py",
+      "line": 46,
+      "signature": "def _rag_response(answer, sources, model)",
+      "docstring": "",
+      "snippet": "def _rag_response(\n    answer: str,\n    sources: list,\n    model: str,\n) -> RagResponse:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_rag_response"
+    },
+    {
+      "name": "root",
+      "type": "endpoint",
+      "file": "app/main.py",
+      "line": 69,
+      "signature": "def root()",
+      "docstring": "",
+      "snippet": "async def root() -> dict[str, str]:\n    return {\n        \"application\": \"NoteBuddy\",\n        \"exercise\": \"1 - Basic LLM Application\",\n        \"docs\": \"/docs\",",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=root"
+    },
+    {
+      "name": "health",
+      "type": "endpoint",
+      "file": "app/main.py",
+      "line": 78,
+      "signature": "def health()",
+      "docstring": "",
+      "snippet": "async def health() -> HealthResponse:\n    return HealthResponse(\n        status=\"ok\",\n        ollama_url=settings.ollama_base_url,\n        model=settings.ollama_model,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=health"
+    },
+    {
+      "name": "ask",
+      "type": "endpoint",
+      "file": "app/main.py",
+      "line": 87,
+      "signature": "def ask(request, client)",
+      "docstring": "",
+      "snippet": "async def ask(\n    request: AskRequest,\n    client: OllamaClient = Depends(get_ollama_client),\n) -> AskResponse:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ask"
+    },
+    {
+      "name": "ask_with_rag",
+      "type": "endpoint",
+      "file": "app/main.py",
+      "line": 103,
+      "signature": "def ask_with_rag(request, rag)",
+      "docstring": "",
+      "snippet": "async def ask_with_rag(\n    request: AskRequest,\n    rag: RagService = Depends(get_rag_service),\n) -> RagResponse:\n    try:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=ask_with_rag"
+    },
+    {
+      "name": "compare_rag",
+      "type": "endpoint",
+      "file": "app/main.py",
+      "line": 118,
+      "signature": "def compare_rag(request, client, rag)",
+      "docstring": "",
+      "snippet": "async def compare_rag(\n    request: AskRequest,\n    client: OllamaClient = Depends(get_ollama_client),\n    rag: RagService = Depends(get_rag_service),\n) -> CompareResponse:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=compare_rag"
+    },
+    {
+      "name": "OllamaError",
+      "type": "class",
+      "file": "app/ollama_client.py",
+      "line": 9,
+      "signature": "class OllamaError(RuntimeError)",
+      "docstring": "Raised when Ollama cannot produce a valid response.",
+      "snippet": "class OllamaError(RuntimeError):\n    \"\"\"Raised when Ollama cannot produce a valid response.\"\"\"\n\n\n@dataclass(frozen=True)\nclass GenerationResult:",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OllamaError"
+    },
+    {
+      "name": "GenerationResult",
+      "type": "class",
+      "file": "app/ollama_client.py",
+      "line": 14,
+      "signature": "class GenerationResult",
+      "docstring": "",
+      "snippet": "class GenerationResult:\n    answer: str\n    model: str\n    total_duration_ns: int | None = None\n    load_duration_ns: int | None = None\n    prompt_tokens: int | None = None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=GenerationResult"
+    },
+    {
+      "name": "OllamaClient",
+      "type": "class",
+      "file": "app/ollama_client.py",
+      "line": 26,
+      "signature": "class OllamaClient",
+      "docstring": "",
+      "snippet": "class OllamaClient:\n    def __init__(self, base_url: str, model: str, timeout_seconds: float = 120) -> None:\n        self.base_url = base_url.rstrip(\"/\")\n        self.model = model\n        self.timeout_seconds = timeout_seconds\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=OllamaClient"
+    },
+    {
+      "name": "_optional_int",
+      "type": "function",
+      "file": "app/ollama_client.py",
+      "line": 105,
+      "signature": "def _optional_int(value)",
+      "docstring": "",
+      "snippet": "def _optional_int(value: Any) -> int | None:\n    return int(value) if isinstance(value, (int, float)) else None",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_optional_int"
+    },
+    {
+      "name": "__init__",
+      "type": "function",
+      "file": "app/ollama_client.py",
+      "line": 27,
+      "signature": "def __init__(self, base_url, model, timeout_seconds)",
+      "docstring": "",
+      "snippet": "    def __init__(self, base_url: str, model: str, timeout_seconds: float = 120) -> None:\n        self.base_url = base_url.rstrip(\"/\")\n        self.model = model\n        self.timeout_seconds = timeout_seconds\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=__init__"
+    },
+    {
+      "name": "generate",
+      "type": "function",
+      "file": "app/ollama_client.py",
+      "line": 32,
+      "signature": "def generate(self, prompt)",
+      "docstring": "",
+      "snippet": "    async def generate(self, prompt: str) -> str:\n        return (await self.generate_detailed(prompt)).answer\n\n    async def generate_detailed(\n        self,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=generate"
+    },
+    {
+      "name": "generate_detailed",
+      "type": "function",
+      "file": "app/ollama_client.py",
+      "line": 35,
+      "signature": "def generate_detailed(self, prompt)",
+      "docstring": "",
+      "snippet": "    async def generate_detailed(\n        self,\n        prompt: str,\n        *,\n        model: str | None = None,",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=generate_detailed"
+    },
+    {
+      "name": "_loaded_model_memory",
+      "type": "function",
+      "file": "app/ollama_client.py",
+      "line": 91,
+      "signature": "def _loaded_model_memory(self, model)",
+      "docstring": "",
+      "snippet": "    async def _loaded_model_memory(self, model: str) -> tuple[int | None, int | None]:\n        try:\n            async with httpx.AsyncClient(timeout=10) as client:\n                response = await client.get(f\"{self.base_url}/api/ps\")\n                response.raise_for_status()",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=_loaded_model_memory"
+    },
+    {
+      "name": "AskRequest",
+      "type": "class",
+      "file": "app/schemas.py",
+      "line": 6,
+      "signature": "class AskRequest(BaseModel)",
+      "docstring": "",
+      "snippet": "class AskRequest(BaseModel):\n    question: str = Field(min_length=1, max_length=10_000)\n\n\nclass AskResponse(BaseModel):\n    answer: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=AskRequest"
+    },
+    {
+      "name": "AskResponse",
+      "type": "class",
+      "file": "app/schemas.py",
+      "line": 10,
+      "signature": "class AskResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class AskResponse(BaseModel):\n    answer: str\n    model: str\n    exercise: int = 1\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=AskResponse"
+    },
+    {
+      "name": "SourceReference",
+      "type": "class",
+      "file": "app/schemas.py",
+      "line": 16,
+      "signature": "class SourceReference(BaseModel)",
+      "docstring": "",
+      "snippet": "class SourceReference(BaseModel):\n    citation: str\n    source: str\n    page: int | None\n    section: str\n    excerpt: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=SourceReference"
+    },
+    {
+      "name": "RagResponse",
+      "type": "class",
+      "file": "app/schemas.py",
+      "line": 25,
+      "signature": "class RagResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class RagResponse(BaseModel):\n    answer: str\n    sources: list[SourceReference]\n    model: str\n    exercise: int = 3\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=RagResponse"
+    },
+    {
+      "name": "CompareResponse",
+      "type": "class",
+      "file": "app/schemas.py",
+      "line": 32,
+      "signature": "class CompareResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class CompareResponse(BaseModel):\n    question: str\n    without_rag: AskResponse\n    with_rag: RagResponse\n\n",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=CompareResponse"
+    },
+    {
+      "name": "HealthResponse",
+      "type": "class",
+      "file": "app/schemas.py",
+      "line": 38,
+      "signature": "class HealthResponse(BaseModel)",
+      "docstring": "",
+      "snippet": "class HealthResponse(BaseModel):\n    status: str\n    ollama_url: str\n    model: str",
+      "sourcegraph_url": "https://sourcegraph.com/search?q=HealthResponse"
+    }
+  ]
+}

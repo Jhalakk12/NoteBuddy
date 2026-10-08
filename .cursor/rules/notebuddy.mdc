@@ -1,0 +1,15 @@
+---
+description: NoteBuddy architecture and development constraints
+alwaysApply: true
+---
+
+# NoteBuddy project rules
+
+- This is one application developed progressively across Exercises 1–5, not five separate applications.
+- Keep the browser dependent only on same-origin `/api` routes.
+- Keep Retrieval, LLM, Data, Chroma, and Ollama private to the backend/container network.
+- Preserve citation metadata (`source`, `page`, `section`, `chunk_index`, and `citation`) through ingestion and retrieval.
+- Do not generate a grounded answer when retrieval returns no evidence.
+- Do not expose secrets or internal service URLs in browser messages.
+- Run `pytest -q` after backend changes and validate `compose.yaml` after deployment changes.
+- The static UI must remain plain HTML, CSS, and JavaScript.

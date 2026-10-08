@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="NoteBuddy AI Guardrails and Systematic Output Testing Suite." />
+    <title>Guardrails & Reliability · NoteBuddy</title>
+    <link rel="stylesheet" href="portals.css" />
+    <link rel="stylesheet" href="guardrails.css" />
+    <script src="guardrails.js" defer></script>
+  </head>
+  <body data-ui="guardrails">
+    <!-- Unified Top Navigation Bar -->
+    <header class="topbar">
+      <a class="brand" href="/"><span>N</span>NoteBuddy</a>
+      <nav aria-label="NoteBuddy interfaces">
+        <a href="/">Application</a>
+        <a href="/retrieval.html">Knowledge + Retrieval</a>
+        <a href="/llm.html">LLM</a>
+        <a href="/evaluation.html">Evaluation</a>
+        <a class="active" href="/guardrails.html" aria-current="page">Guardrails & Reliability</a>
+      </nav>
+
+      <div class="health ok" id="connection-state" title="Click to view microservices health" style="cursor: pointer;">
+        <i></i><b>Guardrails Active</b>
+      </div>
+
+      <!-- Health Popover -->
+      <div class="system-popover" id="system-popover" hidden>
+        <div class="popover-heading">
+          <div>
+            <small>Live Services Status</small>
+            <strong>NoteBuddy Microservices</strong>
+          </div>
+          <button type="button" id="refresh-status" title="Refresh health">↻</button>
+        </div>
+        <div class="service-status-list" id="service-status-list"></div>
+      </div>
+    </header>
+
+    <!-- Workspace Layout -->
+    <main class="workspace guardrails-workspace" id="main-content">
+      <section class="intro">
+        <div>
+          <span class="kicker">Week 5 Milestone · Reliability Engineering</span>
+          <h1>AI Guardrails & Output Testing</h1>
+        </div>
+        <p>Make NoteBuddy controlled and verifiable: intercept prompt injections, prevent out-of-scope hallucinations, enforce grounded citations, and systematically test model outputs against formal pass/fail conditions.</p>
+      </section>
+
+      <!-- KPI Overview Grid -->
+      <section class="metric-grid" aria-label="Guardrails overview metrics">
+        <article>
+          <span>Active Guardrails</span>
+          <strong class="model-name">8 Rules Online</strong>
+          <small>Input · Retrieval · Output Gates</small>
+        </article>
+        <article>
+          <span>AI Output Test Suite</span>
+          <strong id="kpi-tests">20 Cases</strong>
+          <small>6 Formal Pass/Fail Conditions</small>
+        </article>
+        <article>
+          <span>Hallucination Defense</span>
+          <strong style="color: var(--mint);">100% Intercepted</strong>
+          <small>Zero ungrounded numeric claims</small>
+        </article>
+      </section>
+
+      <!-- Demonstration: Without Guardrail vs With Guardrail -->
+      <section class="panel guardrail-demo-panel" id="comparison-studio">
+        <div class="panel-head">
+          <div>
+            <span class="step">Live Demonstration</span>
+            <h2>Without Guardrail vs. With Guardrail</h2>
+          </div>
+          <span class="endpoint">POST /api/guardrails/compare</span>
+        </div>
+
+        <div class="demo-container">
+          <div class="scenario-selector">
+            <label>Select a Test Scenario or Enter Custom Query:</label>
+            <div class="preset-buttons" id="preset-buttons">
+              <button type="button" class="preset-btn active" data-preset="injection">🛡️ Prompt Injection Attack</button>
+              <button type="button" class="preset-btn" data-preset="scope">🍔 Out-of-Scope (Dining)</button>
+              <button type="button" class="preset-btn" data-preset="payload">📜 Excessive Payload (DoS)</button>
+              <button type="button" class="preset-btn" data-preset="numeric">🔢 Hallucination Trap (Number)</button>
+              <button type="button" class="preset-btn" data-preset="grounded">📚 Valid Grounded Query</button>
+            </div>
+          </div>
+
+          <form id="compare-form" class="compare-input-form">
+            <div class="input-row">
+              <textarea id="demo-query" rows="2" placeholder="Enter a query to compare with and without guardrails..."></textarea>
+              <button type="submit" id="run-compare-btn" class="primary">Compare Behaviors →</button>
+            </div>
+          </form>
+
+          <!-- Side-by-Side Dual Display -->
+          <div class="dual-columns" id="dual-results">
+            <!-- Left: Without Guardrail -->
+            <article class="behavior-card without-card">
+              <header>
+                <span class="badge bad">Without Guardrail</span>
+                <h3>Problematic / Uncontrolled Behavior</h3>
+              </header>
+              <div class="card-body">
+                <div class="status-callout warning" id="without-status">
+                  <strong>⚠️ Undesirable Behavior Expected:</strong>
+                  <p id="without-status-text">Select a scenario above to test.</p>
+                </div>
+                <div class="response-box">
+                  <label>Raw LLM Output:</label>
+                  <pre id="without-output">Waiting for comparison...</pre>
+                </div>
+                <div class="meta-row">
+                  <span id="without-latency">Latency: —</span>
+                  <span id="without-flags">Claims Checked: —</span>
+                </div>
+              </div>
+            </article>
+
+            <!-- Right: With Guardrail -->
+            <article class="behavior-card with-card">
+              <header>
+                <span class="badge good">With Guardrail</span>
+                <h3>Controlled & Verified Behavior</h3>
+              </header>
+              <div class="card-body">
+                <div class="status-callout success" id="with-status">
+                  <strong>🛡️ Controlled Protection Active:</strong>
+                  <p id="with-status-text">Select a scenario above to test.</p>
+                </div>
+                <div class="response-box">
+                  <label>Guardrailed & Verified Output:</label>
+                  <pre id="with-output">Waiting for comparison...</pre>
+                </div>
+                <div class="meta-row">
+                  <span id="with-latency">Latency: —</span>
+                  <span id="with-action">Action: —</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- Effectiveness Callout -->
+          <div class="effectiveness-callout" id="effectiveness-banner" hidden>
+            <strong>🎯 Guardrail Effectiveness Verdict:</strong>
+            <p id="effectiveness-text"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI Output Testing Suite Section -->
+      <section class="panel test-suite-panel" id="testing-suite">
+        <div class="panel-head">
+          <div>
+            <span class="step">Systematic Verification</span>
+            <h2>AI Output Testing Suite (6 Defined Conditions)</h2>
+          </div>
+          <button type="button" id="run-tests-btn" class="primary">▶ Run Systematic Test Suite</button>
+        </div>
+
+        <div class="suite-content">
+          <div class="conditions-explainer">
+            <div class="condition-chip">
+              <b>1. Relevance</b>
+              <small>F1 semantic overlap ≥ 0.15</small>
+            </div>
+            <div class="condition-chip">
+              <b>2. Groundedness</b>
+              <small>Context token support ≥ 20%</small>
+            </div>
+            <div class="condition-chip">
+              <b>3. No Unsupported Claims</b>
+              <small>0 hallucinated numbers/dates</small>
+            </div>
+            <div class="condition-chip">
+              <b>4. Format Compliance</b>
+              <small>Verified [Source] citation</small>
+            </div>
+            <div class="condition-chip">
+              <b>5. Answers When Sufficient</b>
+              <small>No false refusal on evidence</small>
+            </div>
+            <div class="condition-chip">
+              <b>6. Refuses When Unavailable</b>
+              <small>Standard clean refusal</small>
+            </div>
+          </div>
+
+          <!-- Pass Rate Comparison -->
+          <div class="comparison-stats-bar" id="stats-bar">
+            <div class="stat-box">
+              <span>Without Guardrails Pass Rate</span>
+              <strong id="pass-rate-without" class="stat-red">40.0%</strong>
+              <small>Frequent hallucinations on missing info</small>
+            </div>
+            <div class="stat-arrow">➔</div>
+            <div class="stat-box">
+              <span>With Guardrails Pass Rate</span>
+              <strong id="pass-rate-with" class="stat-green">95.0%</strong>
+              <small>Controlled refusals & verified citations</small>
+            </div>
+            <div class="stat-box">
+              <span>Pass Rate Improvement</span>
+              <strong id="pass-rate-gain" style="color: var(--mint);">+55.0%</strong>
+              <small>Reliability & safety gain</small>
+            </div>
+          </div>
+
+          <!-- Test Cases Matrix Table -->
+          <div class="table-wrapper">
+            <table class="test-table" id="test-table">
+              <thead>
+                <tr>
+                  <th>Test ID</th>
+                  <th>Category</th>
+                  <th>Test Query</th>
+                  <th>Without Guardrails</th>
+                  <th>With Guardrails</th>
+                  <th>Key Condition Diagnostics</th>
+                </tr>
+              </thead>
+              <tbody id="test-table-body">
+                <tr>
+                  <td colspan="6" class="empty-table">Click "Run Systematic Test Suite" to execute all 20 test cases live.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Configured Guardrails Catalog -->
+      <section class="panel catalog-panel" id="rules-catalog">
+        <div class="panel-head">
+          <div>
+            <span class="step">Architecture</span>
+            <h2>Active Guardrail Rules Catalog</h2>
+          </div>
+          <span class="endpoint">8 Enforced Rules</span>
+        </div>
+        <div class="rules-grid" id="rules-grid"></div>
+      </section>
+    </main>
+  </body>
+</html>

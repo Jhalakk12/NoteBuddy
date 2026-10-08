@@ -1,0 +1,72 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "NoteBuddy: Setup local IDE",
+      "type": "shell",
+      "command": "/bin/zsh",
+      "args": ["scripts/setup_local.sh"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "panel": "dedicated"}
+    },
+    {
+      "label": "NoteBuddy: Run locally",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["scripts/run_notebuddy.py"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "dependsOn": ["NoteBuddy: Setup local IDE"],
+      "dependsOrder": "sequence",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "panel": "dedicated"}
+    },
+    {
+      "label": "NoteBuddy: Test",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["-m", "pytest", "-q"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "group": {"kind": "test", "isDefault": true},
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Validate Compose",
+      "type": "shell",
+      "command": "docker compose config --quiet",
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Build and start",
+      "type": "shell",
+      "command": "docker compose up --detach --build",
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "panel": "dedicated"}
+    },
+    {
+      "label": "Docker: Status",
+      "type": "shell",
+      "command": "docker compose ps",
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Follow logs",
+      "type": "shell",
+      "command": "docker compose logs --follow --tail=100",
+      "options": {"cwd": "${workspaceFolder}"},
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Stop",
+      "type": "shell",
+      "command": "docker compose down",
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    }
+  ]
+}
